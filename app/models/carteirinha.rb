@@ -3,6 +3,7 @@ class Carteirinha < ActiveRecord::Base
 	belongs_to :estudante
 	belongs_to :entidade
 	belongs_to :layout_carteirinha
+	belongs_to :admin_user
 
 	url_path = "/default/:class/:id/:attachment/:style/:filename"
 
@@ -67,6 +68,8 @@ class Carteirinha < ActiveRecord::Base
 	validates_attachment_size :comprovante_matricula, :less_than => 1.megabytes
 	validates_attachment_file_name :comprovante_matricula, :matches => FILES_NAME_PERMIT
 	validates_attachment_content_type :comprovante_matricula, :content_type => FILES_CONTENT_TYPE
+
+	validates_presence_of :estudante
 
 	validate :so_muda_status_versao_impressa_se_pagamento_confirmado, :nao_avancar_status_se_dados_em_branco,
 			 :check_status_carteirinha_apartir_status_pagamento
@@ -151,7 +154,7 @@ class Carteirinha < ActiveRecord::Base
 	end
 
 	def nao_avancar_status_se_dados_em_branco
-		if self.status_versao_impressa_to_i >= 3 # ENVIADA OU ENTREGUE
+		if self.status_versao_impressa_to_i == 3 || self.status_versao_impressa_to_i == 4 # ENVIADA OU ENTREGUE
             variavel = [:nao_antes, :nao_depois, :codigo_uso, :qr_code, :certificado, 
             	        :numero_serie, :layout_carteirinha_id, :estudante_id]
             variavel.each do |v|
@@ -219,7 +222,7 @@ class Carteirinha < ActiveRecord::Base
 		elsif status_pgto_to_i == 5 # em disputa
 			status = @@status_versao_impressas.select{|k,v| k != :aprovada}
 		elsif status_pgto_to_i > 5  # devolvida cancelada ou revogada
-			status = @@status_versao_impressas.select{|k,v| k == :cancelada || k == :revogada || k == :devolvida}.map{|k,v| [v,k]} 
+			status = @@status_versao_impressas.select{|k,v| k == :cancelada || k == :revogada || k == :devolvida} 
 		end
 		status
 	end
@@ -228,12 +231,12 @@ class Carteirinha < ActiveRecord::Base
 		if self.aprovada? # Status é 'Aprovada'
             # Gera informações  
             estudante = self.estudante
-            self.layout_carteirinha = estudante.entidade.layout_carteirinhas.first               if self.layout_carteirinha.blank?
+            self.layout_carteirinha = estudante.entidade.layout_carteirinhas.first        if self.layout_carteirinha.blank?
             self.nao_antes = Time.new                                                     if self.nao_antes.blank?
             self.nao_depois = Time.new(Time.new.year+1, 3, 31).to_date                    if self.nao_depois.blank? 
             self.numero_serie = Carteirinha.gera_numero_serie                             if self.numero_serie.blank?
             self.codigo_uso = Carteirinha.gera_codigo_uso                                 if self.codigo_uso.blank?
-   			self.qr_code = estudante.entidade.url_qr_code.concat(estudante.chave_acesso) 	if self.qr_code.blank?
+   			self.qr_code = estudante.entidade.url_qr_code.concat(estudante.chave_acesso)  if self.qr_code.blank?
             
             # Salva documentação do estudante para a carteirinha
             self.foto = estudante.foto                                             if self.foto.blank?
@@ -311,7 +314,7 @@ class Carteirinha < ActiveRecord::Base
 	end
 
 	def self.gera_numero_serie
-		last = where.not(numero_serie: nil).last 
+		last = where.not(numero_serie: nil).order(:numero_serie).last 
 		last ? last.numero_serie.to_i+1 : 1 
 	end
 

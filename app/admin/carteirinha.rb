@@ -2,15 +2,18 @@ require 'zip'
 ActiveAdmin.register Carteirinha do
    menu priority: 3
    actions :all, except: [:destroy,:new]
-   
-   scope "Todas", :all, default: true
+   config.sort_order = 'aprovada_em_desc'
+
+   scope "Novas", default: true do |carteirinha|
+    carteirinha.where(admin_user: nil)
+   end
 
    Carteirinha.status_versao_impressas.each do |status|
     scope status.second do |carteirinha|
         if current_admin_user.sim?
           carteirinha.where(status_versao_impressa: status.second)
         else
-          carteirinha.where(status_versao_impressa: status.second, alterado_por: current_admin_user.usuario)
+          carteirinha.where(status_versao_impressa: status.second, admin_user_id: current_admin_user.id)
         end
     end
    end 
@@ -23,12 +26,13 @@ ActiveAdmin.register Carteirinha do
           :foto_file_name, :nao_antes, :nao_depois, :codigo_uso,
           :alterado_por, :valor, :forma_pagamento, :status_pagamento, 
           :transaction_id, :certificado, :xerox_rg, :xerox_cpf, 
-          :comprovante_matricula, :carteirinha, :id
+          :comprovante_matricula, :carteirinha, :id, :aprovada_em, :admin_user_id
 	
   filter :nome
 	filter :numero_serie
   filter :transaction_id
-  filter :alterado_por, label: 'Alterado Por'
+  filter :aprovada_em, label: "Data Aprovação", as: :date_range
+  filter :admin_user, label:"Criada Por", collection: AdminUser.all.map{|u| [u.nome, u.id]}, :if=>proc{current_admin_user.sim?}
 	
 	index do
 		selectable_column
@@ -39,16 +43,17 @@ ActiveAdmin.register Carteirinha do
       column "Instituição de Ensino" do |carteirinha|
         carteirinha.instituicao_ensino
       end
-      column "Valor Pago" do |carteirinha|
-        carteirinha.valor
-      end
-      column "Status do Pagamento" do |carteirinha|
+      column "Pagamento" do |carteirinha|
         status_tag(carteirinha.status_pagamento, carteirinha.status_tag_status_pagamento)
       end
-      column "Status da Versão Impressa" do |carteirinha|
+      column "Status" do |carteirinha|
         status_tag(carteirinha.status_versao_impressa.humanize, carteirinha.status_tag_versao_impressa)
       end
-      column :alterado_por
+      if current_admin_user.sim?
+        column "Criada Por" do |carteirinha|
+          carteirinha.admin_user.usuario if carteirinha.admin_user
+        end
+      end
       actions
 	end
 
@@ -110,7 +115,15 @@ ActiveAdmin.register Carteirinha do
                 row "Transação" do
                   carteirinha.transaction_id
                 end
-                row :alterado_por
+                row "Criada por" do
+                  carteirinha.admin_user.usuario if carteirinha.admin_user
+                end 
+                row "Data Aprovação" do
+                  carteirinha.aprovada_em
+                end
+                row "Última Alteração" do 
+                  carteirinha.alterado_por
+                end
             end
         end
         render inline: "<script type='text/javascript'>$('.show-popup-link').magnificPopup({type: 'image'});</script>"
@@ -154,6 +167,9 @@ ActiveAdmin.register Carteirinha do
                 f.input :status_versao_impressa, label: "Status da Versão Impressa", include_blank: false, :input_html=>{:id=>"status-versao-impressas-select"},
                         collection: Carteirinha.show_status_carteirinha_apartir_do_status_pagamento(f.object.status_pagamento).map{|k,v| [v,k]} 
                 f.input :forma_pagamento, as: :select, include_blank: false, prompt: "Selecione forma de pagamento", label: "Forma de Pagamento"
+                if !f.object.new_record? && current_admin_user.sim?
+                  f.input :admin_user, label: "Criado Por", collection: AdminUser.all.map{|u| [u.nome, u.id]}
+                end
                 f.input :transaction_id, label: "Transação"
             end
             f.actions
@@ -169,7 +185,16 @@ ActiveAdmin.register Carteirinha do
     end
 
     before_update do |carteirinha|
-        carteirinha.alterado_por = current_admin_user.usuario
+      if carteirinha.status_versao_impressa.to_sym == :aprovada
+        carteirinha.aprovada_em = Time.new          if carteirinha.aprovada_em.blank?
+      end
+      carteirinha.admin_user = current_admin_user if carteirinha.admin_user.blank?
+      carteirinha.alterado_por = current_admin_user.usuario
+    end
+
+     #Action items 
+    action_item :download, only: :show do
+        link_to 'Download ', download_admin_carteirinha_path(carteirinha)
     end
 
     #Actions
@@ -188,26 +213,11 @@ ActiveAdmin.register Carteirinha do
        end
     end
 
-    collection_action :download_all, method: :get do
-       @carteirinhas = Carteirinha.find(params[:carteirinhas_ids]) if params[:carteirinhas_ids]
-       @carteirinhas.delete_if{|carteirinha| carteirinha.status_versao_impressa_to_i < 2}  if @carteirinhas # Status anterior a 'Aprovada'
-       if @carteirinhas
-        data = Carteirinha.zipfile_by_scope @carteirinhas
-        send_data  data[:stream], type:'application/zip', filename: data[:filename]
-       else
-        flash[:error] =  "Dados não encontrados."
-        redirect_to :back
-       end
-    end
-    #Action items 
-    action_item :download, only: :show do
-        link_to 'Download ', download_admin_carteirinha_path(carteirinha)
-    end
-
-    action_item :download_all, only: :index do
-        ids=Array.new
-        collection.each{ |collection| ids<<collection.id}
-        link_to 'Download', download_all_admin_carteirinhas_path(:carteirinhas_ids => ids)
+    batch_action :download do |ids|
+      @carteirinhas = Carteirinha.find(ids) 
+      @carteirinhas.delete_if{|carteirinha| carteirinha.status_versao_impressa_to_i < 2} # Status anterior a 'Aprovada'
+      data = Carteirinha.zipfile_by_scope @carteirinhas
+      send_data  data[:stream], type:'application/zip', filename: data[:filename]
     end
 
     controller do
@@ -215,59 +225,60 @@ ActiveAdmin.register Carteirinha do
         @estudante = Estudante.find(params[:estudante_id])
         @carteirinha = nil
         atributos = @estudante.atributos_nao_preenchidos
-          if atributos.count > 0 
-            campos = ""
-            atributos.collect{|f| campos.concat(f.concat(", "))}
-            puts "ATRIBUTOS #{atributos}"
-            flash[:alert] = "Não foi possível criar carteirinha. Campo(s) #{campos} não preenchido(s)."
-            redirect_to edit_admin_estudante_path @estudante
+        if atributos.count > 0 
+          campos = ""
+          atributos.collect{|f| campos.concat(f.concat(", "))}
+          puts "ATRIBUTOS #{atributos}"
+          flash[:alert] = "Não foi possível criar carteirinha. Campo(s) #{campos} não preenchido(s)."
+          redirect_to edit_admin_estudante_path @estudante
+        else
+          if @estudante.entidade.layout_carteirinhas.empty?
+            flash[:alert] = "Não foi possível criar carteirinha. Entidade #{@estudante.entidade.nome} não tem nenhum layout de carteirinha."
+            redirect_to :back
           else
             @carteirinha = @estudante.carteirinhas.build do |c|
-            # Dados pessoais
-            c.nome = @estudante.nome
-            c.rg   = @estudante.rg
-            c.cpf  = @estudante.cpf
-            c.data_nascimento = @estudante.data_nascimento
-            c.expedidor_rg = @estudante.expedidor_rg
-            c.uf_expedidor_rg = @estudante.uf_expedidor_rg
-            c.foto = @estudante.foto
-            c.xerox_rg = @estudante.xerox_rg
-            c.xerox_cpf = @estudante.xerox_cpf
-            c.comprovante_matricula = @estudante.comprovante_matricula
+              # Dados pessoais
+              c.nome = @estudante.nome
+              c.rg   = @estudante.rg
+              c.cpf  = @estudante.cpf
+              c.data_nascimento = @estudante.data_nascimento
+              c.expedidor_rg = @estudante.expedidor_rg
+              c.uf_expedidor_rg = @estudante.uf_expedidor_rg
+              c.foto = @estudante.foto
+              c.xerox_rg = @estudante.xerox_rg
+              c.xerox_cpf = @estudante.xerox_cpf
+              c.comprovante_matricula = @estudante.comprovante_matricula
 
-            # Dados estudantis
-            c.matricula = @estudante.matricula
-            c.instituicao_ensino = @estudante.instituicao_ensino.nome
-            c.cidade_inst_ensino = @estudante.instituicao_ensino.cidade.nome
-            c.uf_inst_ensino = @estudante.instituicao_ensino.estado.sigla
-            c.escolaridade = @estudante.escolaridade_nome
-            c.curso_serie = @estudante.curso_nome
-              
-            # Dados de pagamento
-            c.valor = @estudante.entidade.valor_carteirinha.to_f+@estudante.entidade.frete_carteirinha.to_f
-            c.status_versao_impressa = :pagamento #status versao impressa
-            c.status_pagamento = :iniciado  #status pagamento
-            c.forma_pagamento = :a_definir  #forma pagamento
-              
-            # Layout 
-            if @estudante.entidade.layout_carteirinhas
+              # Dados estudantis
+              c.matricula = @estudante.matricula
+              c.instituicao_ensino = @estudante.instituicao_ensino.nome
+              c.cidade_inst_ensino = @estudante.instituicao_ensino.cidade.nome
+              c.uf_inst_ensino = @estudante.instituicao_ensino.estado.sigla
+              c.escolaridade = @estudante.escolaridade_nome
+              c.curso_serie = @estudante.curso_nome
+                    
+              # Dados de pagamento
+              c.valor = @estudante.entidade.valor_carteirinha.to_f+@estudante.entidade.frete_carteirinha.to_f
+              c.status_versao_impressa = :pagamento #status versao impressa
+              c.status_pagamento = :iniciado  #status pagamento
+              c.forma_pagamento = :a_definir  #forma pagamento
+                  
+              # Dados do Usuario admin
+              c.admin_user = current_admin_user
+
+              # Layout 
               c.layout_carteirinha = @estudante.entidade.layout_carteirinhas.last
-            else
-              flash[:alert] = "Não foi possível criar carteirinha. Entidade #{@estudante.entidade.nome} não tem nenhum layout de carteirinha."
-              redirect_to @estudante
             end
-          end
-
-          if @carteirinha.save! 
-            flash[:success] = "Carteirinha criada para o estudante: #{@estudante.nome}. Altere os dados de pagamento."
-            render :edit
-          else
-            flash[:error] = "Não foi possível criar carteirinha. @carteirinha.errors"
-            redirect_to @estudante
-          end
-        end
+            if @carteirinha.save! 
+              flash[:success] = "Carteirinha criada para o estudante: #{@estudante.nome}. Altere os dados de pagamento."
+              render :edit
+            else
+              flash[:error] = "Não foi possível criar carteirinha. @carteirinha.errors"
+              redirect_to :back
+            end
+          end  
       end
-
+    end
       # Permite envio de notificações para o aluno quando alterado o status da carteirinha 
       # def update(options={}, &block) 
       #   if resource.status_versao_impressa != params[:carteirinha][:status_versao_impressa]  

@@ -16,7 +16,7 @@ class Escolaridade < ActiveRecord::Base
 	end
 
 	def self.escolaridades
-		where status: '1'
+		where(status: "1")
 	end
 
 	def self.cursos id

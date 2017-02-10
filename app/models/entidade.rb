@@ -74,6 +74,14 @@ class Entidade < ActiveRecord::Base
 		end
 	end
 
+	def self.entidade_padrao
+		first
+	end
+
+	def layout_anverso
+		self.layout_carteirinhas.first.anverso if self.layout_carteirinhas.first
+	end
+
 	private 
 		def config_data_from_dominio 
 			self.usuario = self.sigla unless self.usuario

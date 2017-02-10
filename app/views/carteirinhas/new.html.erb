@@ -1,7 +1,9 @@
 <h3 class="text-primary"> Carteira de Identifição Estudantil </h3>
 	<%= form_for ([@estudante, @estudante.carteirinhas.build]) do |f| %>
 	<div class="col-md-12">
-		
+		<div class="col-md-8">
+			<%= image_tag Entidade.entidade_padrao.layout_anverso.url, :class=>'img img-responsive' if Entidade.entidade_padrao.layout_anverso %>
+		</div>
 		<div class="col-md-5">
 			<div class="checkbox"><br>
 				<p><strong>Valor:</strong>&nbsp;R$<%= @entidade.valor_carteirinha.to_f %> </p>

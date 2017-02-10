@@ -96,7 +96,7 @@ ActiveAdmin.register Entidade do
 			f.input :usuario
 			f.input :token_certificado, label: "Senha"
 			f.input :dominio, label: "Domínio"
-			f.input :url_qr_code, label: "URL Qr-Code", :hint=>"Domínio da entidade + '/certificados/show'"
+			f.input :url_qr_code, label: "URL Qr-Code", :hint=>"Domínio da entidade + '/certificados/'"
 			f.input :auth_info_access, label: "Autoridade de Acesso à Informação (URL)"
 			f.input :crl_dist_points, label: "CRL Ponto de Distribuição (URL)"
 		end

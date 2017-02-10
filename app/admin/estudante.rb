@@ -10,35 +10,39 @@ ActiveAdmin.register Estudante do
                 :comprovante_matricula, :xerox_rg, :email, :password, 
                 :celular, :numero, :expedidor_rg, :uf_expedidor_rg,
                 :cidade_inst_ensino, :uf_inst_ensino, :xerox_cpf, 
-                :instituicao_ensino_id, :curso_id, :cidade_id, :entidade_id
+                :instituicao_ensino_id, :curso_id, :cidade_id, 
+                :entidade_id, :admin_user_id
 
   filter :email
   filter :nome
-  filter :cpf
+  if Entidade.count > 1
+    filter :entidade, as: :select, collection: Entidade.all.map{|e| [e.nome, e.id]}
+  end 
   filter :rg
-  filter :cidade   
-  filter :instituicao_ensino
-  filter :curso_serie
+  filter :cpf
   filter :matricula
-
+  filter :instituicao_ensino, as: :select, collection: InstituicaoEnsino.all.map{|i| [i.nome, i.id]}
+  filter :curso, as: :select,  collection: Curso.all.map{|i| [i.nome, i.id]}
+  filter :admin_user, label:"Cadastrado Por", collection: AdminUser.all.map{|u| [u.nome, u.id]}, :if=>proc{current_admin_user.sim?}
+  
   index do
     selectable_column
     column :email
     column :nome
-    column "Entidade" do |estudante|
-      estudante.entidade_nome
+    if Entidade.count > 1
+      column "Entidade" do |estudante|
+        estudante.entidade.sigla if estudante.entidade
+      end
     end
-    column "Gênero" do |estudante|
-      estudante.sexo
+    column "RG" do |estudante|
+      estudante.rg
     end
-    column :telefone
-    column :logradouro
+    column "CPF" do |estudante|
+      estudante.cpf
+    end
     column "Cidade" do |estudante|
       estudante.cidade.nome if estudante.cidade
     end 
-    column "UF" do |estudante|
-      estudante.estado_nome
-    end
     actions
   end
 
@@ -106,38 +110,39 @@ ActiveAdmin.register Estudante do
       end
     end
     if current_admin_user.sim?
-      if current_admin_user.super_admin?
-        panel "Meta Dados" do 
-          attributes_table_for estudante do
-            row :foto_file_name
-            row :foto_content_type
-            row :foto_file_size
-            row :foto_update_at
-            row :comprovante_matricula_file_name
-            row :comprovante_matricula_content_type
-            row :comprovante_matricula_file_size
-            row :comprovante_matricula_update_at
-            row :xerox_rg_file_name
-            row :xerox_rg_content_type
-            row :xerox_rg_file_size
-            row :xerox_rg_update_at
-            row :provider
-            row :uid 
-            row :oauth_token
-            row :oauth_expires_at
-            row :created_at
-            row :updated_at
-            row :encrypted_password
-            row :reset_password_token
-            row :reset_password_sent_at
-            row :remember_created_at
-            row :sign_in_count
-            row :current_sign_in_at
-            row :last_sign_in_at
-            row :current_sign_in_ip
-            row :last_sign_in_ip
-          end
-        end
+      panel "Meta Dados" do 
+        attributes_table_for estudante do
+          row "Cadastrado Por" do
+            estudante.admin_user.usuario if estudante.admin_user
+          end  
+          row :foto_file_name
+          row :foto_content_type
+          row :foto_file_size
+          row :foto_update_at
+          row :comprovante_matricula_file_name
+          row :comprovante_matricula_content_type
+          row :comprovante_matricula_file_size
+          row :comprovante_matricula_update_at
+          row :xerox_rg_file_name
+          row :xerox_rg_content_type
+          row :xerox_rg_file_size
+          row :xerox_rg_update_at
+          row :provider
+          row :uid 
+          row :oauth_token
+          row :oauth_expires_at
+          row :created_at
+          row :updated_at
+          row :encrypted_password
+          row :reset_password_token
+          row :reset_password_sent_at
+          row :remember_created_at
+          row :sign_in_count
+          row :current_sign_in_at
+          row :last_sign_in_at
+          row :current_sign_in_ip
+          row :last_sign_in_ip
+        end 
       end
     end
     render inline: "<script type='text/javascript'>$('.show-popup-link').magnificPopup({type: 'image'});</script>"
@@ -184,6 +189,11 @@ ActiveAdmin.register Estudante do
       f.input :cidade, :as => :select, prompt: "Selecione a Cidade", :input_html=>{:id=>"cidades-select"},
               collection: Cidade.where(estado_id: f.object.estado_id).map{|c| [c.nome, c.id]}, include_blank: false
     end
+    if current_admin_user.sim? && !f.object.new_record?
+      f.inputs "Cadastro" do
+        f.input :admin_user, label: "Cadastrado Por", collection: AdminUser.all.map{|u| [u.nome, u.id]}
+      end
+    end
     f.actions
     # Script para escolher 'curso' a partir de 'escolaridade'
     render inline: "<script type='text/javascript'> $('#escolaridades-select').change(function(){ 
@@ -206,8 +216,14 @@ ActiveAdmin.register Estudante do
   end
 
   before_create do |estudante|
+    estudante.admin_user = current_admin_user
     estudante.password = Devise.friendly_token
     estudante.skip_confirmation!
+    estudante.skip_confirmation_notification!
+  end
+
+  after_create do |estudante|
+    #EstudanteNotificacoes.create_notificacoes(estudante).deliver_later
   end
 
   # Actions

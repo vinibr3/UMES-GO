@@ -27,7 +27,6 @@ ActiveAdmin.register AdminUser do
     end
     column :telefone
     column "Cidade", :cidade_nome
-    column "UF", :uf_nome
     actions
   end
 
@@ -113,7 +112,7 @@ ActiveAdmin.register AdminUser do
       f.input :cpf, label:"CPF"
       f.input :rg, label:"RG"
       f.input :expedidor_rg, label:"Expedidor RG"
-      f.input :uf_expedidor_rg, label:"UF Expedidor RG"
+      f.input :uf_expedidor_rg, label:"UF Expedidor RG", as: :select, collection: Estado.all.map{|e| e.sigla}
       f.input :data_nascimento, label: "Data de Nascimento", as: :datepicker, datepicker_options: { day_names_min: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
                                                                                                     month_names_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
                                                                                                     year_range: "1930:", show_anim: "slideDown", changeMonth: true, changeYear: true}

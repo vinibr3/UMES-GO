@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170120215716) do
+ActiveRecord::Schema.define(version: 20170209205843) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,8 +134,11 @@ ActiveRecord::Schema.define(version: 20170120215716) do
     t.integer  "xerox_cpf_file_size"
     t.datetime "xerox_cpf_updated_at"
     t.integer  "entidade_id"
+    t.datetime "aprovada_em"
+    t.integer  "admin_user_id"
   end
 
+  add_index "carteirinhas", ["admin_user_id"], name: "index_carteirinhas_on_admin_user_id", using: :btree
   add_index "carteirinhas", ["entidade_id"], name: "index_carteirinhas_on_entidade_id", using: :btree
   add_index "carteirinhas", ["estudante_id"], name: "index_carteirinhas_on_estudante_id", using: :btree
   add_index "carteirinhas", ["layout_carteirinha_id"], name: "index_carteirinhas_on_layout_carteirinha_id", using: :btree
@@ -278,8 +281,10 @@ ActiveRecord::Schema.define(version: 20170120215716) do
     t.datetime "xerox_cpf_updated_at"
     t.integer  "entidade_id"
     t.integer  "cidade_id"
+    t.integer  "admin_user_id"
   end
 
+  add_index "estudantes", ["admin_user_id"], name: "index_estudantes_on_admin_user_id", using: :btree
   add_index "estudantes", ["cidade_id"], name: "index_estudantes_on_cidade_id", using: :btree
   add_index "estudantes", ["confirmation_token"], name: "index_estudantes_on_confirmation_token", unique: true, using: :btree
   add_index "estudantes", ["email"], name: "index_estudantes_on_email", unique: true, using: :btree
@@ -374,10 +379,12 @@ ActiveRecord::Schema.define(version: 20170120215716) do
   end
 
   add_foreign_key "admin_users", "cidades"
+  add_foreign_key "carteirinhas", "admin_users"
   add_foreign_key "carteirinhas", "entidades"
   add_foreign_key "cidades", "estados"
   add_foreign_key "cursos", "escolaridades"
   add_foreign_key "cursos", "instituicao_ensinos"
+  add_foreign_key "estudantes", "admin_users"
   add_foreign_key "estudantes", "cidades"
   add_foreign_key "estudantes", "entidades"
   add_foreign_key "instituicao_ensinos", "cidades"
