@@ -32,7 +32,7 @@ ActiveAdmin.register Carteirinha do
 	filter :numero_serie
   filter :transaction_id
   filter :aprovada_em, label: "Data Aprovação", as: :date_range
-  filter :admin_user, label:"Criada Por", collection: AdminUser.all.map{|u| [u.nome, u.id]}, :if=>proc{current_admin_user.sim?}
+  filter :admin_user, label:"Criada Por", collection: proc{AdminUser.all.map{|u| [u.nome, u.id]}}, :if=>proc{current_admin_user.sim?}
 	
 	index do
 		selectable_column

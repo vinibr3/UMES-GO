@@ -67,8 +67,7 @@ class Estudante < ActiveRecord::Base
 	validates_attachment_content_type :xerox_cpf, :content_type=> FILES_CONTENT_TYPE
 	validates_acceptance_of :termos
     
-    validates_length_of :foto_file_name, :comprovante_matricula_file_name, :xerox_rg_file_name, 
-                      :maximum => 50, :message => "Nome do arquivo deve ser menor que #{count} caracteres"
+    validates_length_of :foto_file_name, :comprovante_matricula_file_name, :xerox_rg_file_name, :maximum => 50, :message => "Nome do arquivo deve ser menor que %{count} caracteres"
   
 	public
 		def tem_carteirinha

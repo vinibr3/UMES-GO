@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170209205843) do
+ActiveRecord::Schema.define(version: 20170214012402) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -102,11 +102,10 @@ ActiveRecord::Schema.define(version: 20170209205843) do
     t.string   "uf_inst_ensino"
     t.string   "curso_serie"
     t.string   "codigo_uso"
-    t.string   "numero_serie"
     t.date     "nao_antes"
     t.date     "nao_depois"
     t.string   "qr_code"
-    t.string   "status_versao_impressa",             null: false
+    t.string   "status_versao_impressa",                       null: false
     t.string   "foto_file_name"
     t.string   "foto_content_type"
     t.integer  "foto_file_size"
@@ -115,8 +114,8 @@ ActiveRecord::Schema.define(version: 20170209205843) do
     t.integer  "estudante_id"
     t.integer  "layout_carteirinha_id"
     t.string   "alterado_por"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
+    t.datetime "created_at",                                   null: false
+    t.datetime "updated_at",                                   null: false
     t.string   "valor"
     t.string   "forma_pagamento"
     t.string   "status_pagamento"
@@ -136,6 +135,7 @@ ActiveRecord::Schema.define(version: 20170209205843) do
     t.integer  "entidade_id"
     t.datetime "aprovada_em"
     t.integer  "admin_user_id"
+    t.integer  "numero_serie",                       limit: 8
   end
 
   add_index "carteirinhas", ["admin_user_id"], name: "index_carteirinhas_on_admin_user_id", using: :btree
@@ -376,6 +376,11 @@ ActiveRecord::Schema.define(version: 20170209205843) do
     t.text     "body"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
+  end
+
+  create_table "teste", id: false, force: :cascade do |t|
+    t.string "nome"
+    t.string "numero_serie"
   end
 
   add_foreign_key "admin_users", "cidades"
