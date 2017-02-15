@@ -47,7 +47,8 @@ ActiveAdmin.register Carteirinha do
         status_tag(carteirinha.status_pagamento, carteirinha.status_tag_status_pagamento)
       end
       column "Status" do |carteirinha|
-        status_tag(carteirinha.status_versao_impressa.humanize, carteirinha.status_tag_versao_impressa)
+        status = carteirinha.status_versao_impressa
+        status_tag( status ? status : '', carteirinha.status_tag_versao_impressa)
       end
       if current_admin_user.sim?
         column "Criada Por" do |carteirinha|

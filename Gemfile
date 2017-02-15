@@ -56,7 +56,7 @@ gem 'omniauth-facebook'
 # Gerencia variaveis de ambiente
 gem 'figaro', '~> 1.1', '>= 1.1.1'
 # Edita imagens
-gem 'rmagick', '~> 2.15', '>= 2.15.4'
+#gem 'rmagick', '~> 2.15', '>= 2.15.4'
 # Verifica certificados ou fornece um quando não há
 #gem 'certified', '~> 1.0'
 # Gera arquivo .zip
@@ -80,9 +80,11 @@ gem 'active_admin_datetimepicker', '~> 0.3.0'
 gem 'remotipart', '~> 1.3', '>= 1.3.1'
 # Jquery FileUpload
 gem 'jquery-fileupload-rails', '~> 0.4.7'
+# API do Google para desenho de gráficos
+gem 'googlecharts', '~> 1.6', '>= 1.6.12'
 
 group :production do
- gem 'unicorn'
+ #gem 'unicorn'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem

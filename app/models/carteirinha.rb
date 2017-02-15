@@ -126,7 +126,7 @@ class Carteirinha < ActiveRecord::Base
 			status = :ok
 		else status_pgto_to_i > 4 
 			status = :error
-		end
+		end if status_pgto_to_i
 		status
 	end
 
@@ -167,7 +167,7 @@ class Carteirinha < ActiveRecord::Base
 		index=-1
 		i=0
 		@@status_versao_impressas.each_key do |key|
-			index=i if key == self.status_versao_impressa.to_sym
+			index=i if self.status_versao_impressa && key == self.status_versao_impressa.to_sym && 
 			i=i+1
 		end
 		index
@@ -184,7 +184,7 @@ class Carteirinha < ActiveRecord::Base
 
 	def self.status_pagamento_to_i status_pgto
 		statuses = @@status_pagamentos.map{|k,v| k}
-		statuses.index(status_pgto.to_sym)
+		statuses.index(status_pgto.to_sym) if status_pgto
 	end
 
 	def self.status_pagamento_by_code code
@@ -254,10 +254,10 @@ class Carteirinha < ActiveRecord::Base
 		# Desenha os dados (texto) no layout
 		draw = Magick::Draw.new
 		draw.pointsize = lyt.tamanho_fonte
-		draw.annotate(img, 0, 0, lyt.nome_posx, lyt.nome_posy, self.nome.upcase)                                            	 unless lyt.nome_posx.blank? || lyt.nome_posy.blank? 
-		draw.annotate(img, 0, 0, lyt.instituicao_ensino_posx, lyt.instituicao_ensino_posy, self.instituicao_ensino.upcase)       unless lyt.instituicao_ensino_posx.blank? || lyt.instituicao_ensino_posy.blank? 
-		draw.annotate(img, 0, 0, lyt.escolaridade_posx, lyt.escolaridade_posy, self.escolaridade.upcase)               	         unless lyt.escolaridade_posx.blank? || lyt.escolaridade_posy.blank? 
-		draw.annotate(img, 0, 0, lyt.curso_posx, lyt.curso_posy, self.curso_serie.upcase)                                        unless lyt.curso_posx.blank? || lyt.curso_posy.blank? 
+		draw.annotate(img, 0, 0, lyt.nome_posx, lyt.nome_posy, self.nome.mb_chars.upcase)                                            	 unless lyt.nome_posx.blank? || lyt.nome_posy.blank? 
+		draw.annotate(img, 0, 0, lyt.instituicao_ensino_posx, lyt.instituicao_ensino_posy, self.instituicao_ensino.mb_chars.upcase)       unless lyt.instituicao_ensino_posx.blank? || lyt.instituicao_ensino_posy.blank? 
+		draw.annotate(img, 0, 0, lyt.escolaridade_posx, lyt.escolaridade_posy, self.escolaridade.mb_chars.upcase)               	         unless lyt.escolaridade_posx.blank? || lyt.escolaridade_posy.blank? 
+		draw.annotate(img, 0, 0, lyt.curso_posx, lyt.curso_posy, self.curso_serie.mb_chars.upcase)                                        unless lyt.curso_posx.blank? || lyt.curso_posy.blank? 
 		draw.annotate(img, 0, 0, lyt.data_nascimento_posx, lyt.data_nascimento_posy, self.data_nascimento.strftime("%d/%m/%Y"))  unless lyt.data_nascimento_posx.blank? || lyt.data_nascimento_posy.blank? 
 		draw.annotate(img, 0, 0, lyt.rg_posx, lyt.rg_posy, self.rg)                                                  		 	 unless lyt.rg_posx.blank? || lyt.rg_posy.blank? 
 		draw.annotate(img, 0, 0, lyt.cpf_posx, lyt.cpf_posy, self.cpf)                                                           unless lyt.cpf_posx.blank? || lyt.cpf_posy.blank?
