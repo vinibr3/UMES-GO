@@ -1,0 +1,18 @@
+<section>
+	<h4>Notícias </h4>
+		<% @noticias.each do |noticia| %>
+			<div class="element one three">
+				<%= link_to noticia, class:'prettyphoto' do %>
+					<%= image_tag noticia.foto.url, class:'img img-responsive' %>
+					<div class="pcap">                             
+						<p> <%= noticia.body.to_s.first(140) if noticia.body %> <%= link_to 'Ler mais', noticia_path(noticia) %></p>		  
+					</div>
+				<% end %>
+			</div>
+		<% end %>
+		<% if @noticias.count > 0 %>
+			<div class="button">
+				<%= link_to 'Mais notícias', noticias_path %>
+			</div>
+		<% end %>
+</section>

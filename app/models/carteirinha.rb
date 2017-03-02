@@ -36,13 +36,13 @@ class Carteirinha < ActiveRecord::Base
 
 	# validações
 	validates :nome, length: { maximum: 70, too_long: "Máximo de 70 caracteres permitidos"}, format:{with: LETRAS, message:"Somente letras é permitido!"}
-	validates :instituicao_ensino, length:{maximum: 50}
-	validates :curso_serie, length:{maximum: 70}
-	validates :matricula, numericality: true, length:{maximum: 30}, allow_blank: true
-	validates :rg, numericality: {only_integer: true}
-	validates :instituicao_ensino, length:{maximum: 50, too_long: "Máximo de 50 caracteres permitidos!."}, format: {with: LETRAS}, allow_blank: true
-	validates :cidade_inst_ensino, length:{maximum: 30, too_long:"Máximo de 70 carectetes é permitidos!"}, format:{with: LETRAS}, allow_blank: true
-	validates :curso_serie, length:{maximum: 40, too_long: "Máximo de 40 caracteres permitidos!."}, format:{with: LETRAS}, allow_blank: true
+	validates :instituicao_ensino, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!"}
+	validates :curso_serie, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!"}
+	validates :matricula, numericality: true, length:{maximum: 50, too_long: "Máximo de 50 caracteres permitidos!"}, allow_blank: true
+	validates :rg, numericality: { only_integer: true }
+	validates :instituicao_ensino, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!."}, format: {with: LETRAS}, allow_blank: true
+	validates :cidade_inst_ensino, length:{maximum: 40, too_long:"Máximo de 70 carectetes é permitidos!"}, format:{with: LETRAS}, allow_blank: true
+	validates :curso_serie, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!."}, format:{with: LETRAS}, allow_blank: true
 	validates :termos, acceptance: true
 	validates :numero_serie, numericality: true, uniqueness: true, allow_blank: true
 	validates :cpf, numericality: true, length:{is: 11, too_long: "Necessário 11 caracteres.",  too_short: "Necessário 11 caracteres."}, allow_blank: true
@@ -71,10 +71,9 @@ class Carteirinha < ActiveRecord::Base
 
 	validates_presence_of :estudante
 
-	validate :so_muda_status_versao_impressa_se_pagamento_confirmado, :nao_avancar_status_se_dados_em_branco,
-			 :check_status_carteirinha_apartir_status_pagamento
-
-	before_update :gera_dados_se_carteirinha_aprovada, :muda_status_carteirinha_apartir_status_pagamento
+	before_update :gera_dados_se_carteirinha_aprovada, :muda_status_carteirinha_apartir_status_pagamento,
+				  :so_muda_status_versao_impressa_se_pagamento_confirmado, :nao_avancar_status_se_dados_em_branco,
+			      :check_status_carteirinha_apartir_status_pagamento
 
 	def dias_validade 
 		nao_depois  = self.nao_depois
@@ -167,7 +166,7 @@ class Carteirinha < ActiveRecord::Base
 		index=-1
 		i=0
 		@@status_versao_impressas.each_key do |key|
-			index=i if self.status_versao_impressa && key == self.status_versao_impressa.to_sym && 
+			index=i if self.status_versao_impressa && key == self.status_versao_impressa.to_sym
 			i=i+1
 		end
 		index
@@ -253,6 +252,7 @@ class Carteirinha < ActiveRecord::Base
 		
 		# Desenha os dados (texto) no layout
 		draw = Magick::Draw.new
+		draw.font_weight = Magick::BoldWeight
 		draw.pointsize = lyt.tamanho_fonte
 		draw.annotate(img, 0, 0, lyt.nome_posx, lyt.nome_posy, self.nome.mb_chars.upcase)                                            	 unless lyt.nome_posx.blank? || lyt.nome_posy.blank? 
 		draw.annotate(img, 0, 0, lyt.instituicao_ensino_posx, lyt.instituicao_ensino_posy, self.instituicao_ensino.mb_chars.upcase)       unless lyt.instituicao_ensino_posx.blank? || lyt.instituicao_ensino_posy.blank? 
@@ -262,8 +262,7 @@ class Carteirinha < ActiveRecord::Base
 		draw.annotate(img, 0, 0, lyt.rg_posx, lyt.rg_posy, self.rg)                                                  		 	 unless lyt.rg_posx.blank? || lyt.rg_posy.blank? 
 		draw.annotate(img, 0, 0, lyt.cpf_posx, lyt.cpf_posy, self.cpf)                                                           unless lyt.cpf_posx.blank? || lyt.cpf_posy.blank?
 		draw.annotate(img, 0, 0, lyt.matricula_posx, lyt.matricula_posy, self.matricula)                                         unless lyt.matricula_posx.blank? || lyt.matricula_posy.blank?                    
-		draw.annotate(img, 0, 0, lyt.nao_depois_posx, lyt.nao_depois_posy, self.nao_depois.strftime("%d/%m/%Y"))                 unless lyt.nao_depois_posx.blank? || lyt.nao_depois_posy.blank?
-		draw.font_weight(700)  # bold                                             			                                             
+		draw.annotate(img, 0, 0, lyt.nao_depois_posx, lyt.nao_depois_posy, self.nao_depois.strftime("%d/%m/%Y"))                 unless lyt.nao_depois_posx.blank? || lyt.nao_depois_posy.blank?                                            			                                             
 		draw.annotate(img, 0, 0, lyt.codigo_uso_posx, lyt.codigo_uso_posy, self.codigo_uso.upcase)                         		 unless lyt.codigo_uso_posx.blank? || lyt.codigo_uso_posy.blank? 
 		 
 		# Desenha foto 

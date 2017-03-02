@@ -1,0 +1,25 @@
+<section>
+	<div class="sidebar">
+		<div class="widget">
+			<h4> Agenda </h4>
+			<ul>
+			<% @eventos.each do |e| %>
+				<li> 
+					<div class="bg-success">
+						<h5 class="bg-info"> <span><%= e.data.strftime("%d/%m/%Y") %> </span> <span class="pull-right"> <%= e.data.strftime("%H:%M")%></span></h5>
+						<%= link_to e do %> 
+							<% image_tag e.folder.url, class:'img img-responsive' if e.folder %>
+							<p><%= e.titulo  %></p>
+						<% end %>
+					</div>
+				</li>
+			<% end if @eventos %>																							
+			</ul> 
+		</div>
+		<% if @eventos.count > 0 %>
+			<div class="button">
+				<%= link_to 'Ver mais', eventos_path %>
+			</div>
+		<% end %>
+	</div>
+</section>

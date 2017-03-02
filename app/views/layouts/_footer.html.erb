@@ -1,0 +1,55 @@
+<!-- Footer -->
+		<footer>
+			<div class="container">
+				<div class="row">
+				<div class="col-md-4">
+					<!-- Widget 1 -->
+					<div class="widget">
+						<iframe src="https://www.facebook.com/plugins/page.php?href=https%3A%2F%2Fwww.facebook.com%2Fumesgo&tabs&width=320&height=154&small_header=true&adapt_container_width=true&hide_cover=false&show_facepile=true&appId" width="320" height="154" style="border:none;overflow:hidden" scrolling="no" frameborder="0" allowTransparency="true"></iframe>
+						<!-- Social Media -->
+						<div class="social">
+							<a href="https://twitter.com/umesgo"><i class="fa fa-twitter twitter"></i></a>
+							<a href="https://www.facebook.com/umesgo"><i class="fa fa-facebook facebook"></i></a>
+							<a href="#"><i class="fa fa-google-plus google-plus"></i></a>
+							<a href="#"><i class="fa fa-linkedin linkedin"></i></a>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-4">
+				 <!-- widget 2 -->
+				 <div class="widget">
+					<h4>Noticas Recentes</h4>
+					   <ul>
+					   <% Noticia.last(5).each do |n| %>
+							  <li><i class="fa fa-angle-right"></i> <%= link_to n.titulo, n %></li>
+					   <% end %>
+					   </ul>
+				 </div>
+			  </div>
+			  <div class="col-md-4">
+				 <!-- Widget 3 -->
+				 <div class="widget">
+					<h4>Páginas</h4>
+					<ul>
+					   <li><i class="fa fa-angle-right"></i> <%= link_to 'Home' , home_path %></li>
+					   <li><i class="fa fa-angle-right"></i> <%= link_to 'Sobre nós' , sobre_path %></li>
+					   <li><i class="fa fa-angle-right"></i> <%= link_to 'Lei da Meia Entrada' , meia_entrada_path %></li>
+					   <li><i class="fa fa-angle-right"></i> <%= link_to 'Notícias' , noticias_path %></li>
+					   <li><i class="fa fa-angle-right"></i> <%= link_to 'Consulta' , consulta_path %></li>
+					   <li><i class="fa fa-angle-right"></i> <%= link_to 'Contato' , contato_path %>	</li>
+					</ul>
+				 </div>
+			  </div>
+			 </div>
+			 <div class="row">
+			  <hr />
+			  <div class="col-md-12"><p class="copy pull-left">
+				<!-- Copyright information. You can remove my site link. -->
+				Copyright &copy; <a href="http://www.umesgo.org.br">UMESGO</a> | Projetado por <a href="http://www.dotisolucoes.com.br">DoTI Soluções Inteligentes</a></p></div>
+			</div>
+		  </div>
+		</footer>		
+		<!--/ Footer -->
+	
+		<!-- Scroll to top -->
+		<span class="totop"><a href="#"><i class="fa fa-angle-up"></i></a></span>

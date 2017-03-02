@@ -8,7 +8,7 @@ class InstituicaoEnsino < ActiveRecord::Base
   STRING_REGEX = /\A[a-z A-Z]+\z/
   LETRAS = /[A-Z a-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+/
 
-  validates :nome, length: { maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"}, 
+  validates :nome, length: { maximum: 100, too_long: "Máximo de 100 caracteres permitidos!"}, 
 	                 		   format:{with: LETRAS, message:"Somente letras é permitido!"},
 	                 		   allow_blank: false
   validates :sigla, length: {maximum: 10, too_long: "Máximo de #{count} caracteres permitidos."},

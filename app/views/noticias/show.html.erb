@@ -1,0 +1,31 @@
+<div class="row">
+    <div class="col-md-12">
+        <div class="blog">
+            <!-- Blog Posts -->
+            <div class="col-md-8 col-sm-8">
+                <section>
+	                <div class="posts">
+						<div class="entry">
+						    <h2><%= @noticia.titulo if @noticia%></h2>
+						    <!-- Meta details -->
+						    <div class="meta">
+						         <i class="fa fa-calendar"></i> <%= @noticia.created_at.strftime("%d/%m/%Y") if @noticia %> <i class="fa fa-user"></i> <%= @noticia.autor if @noticia%>
+						    </div>
+						    <!-- Thumbnail -->
+						    <div class="">
+						        <%= image_tag @noticia.foto.url, class:'img img-responsive' if @noticia && @noticia.foto %>
+						    </div>
+						    <p>
+						        <%= @noticia.body if @noticia %>
+						    </p>
+						</div>                     
+	                </div>
+                </section>
+            </div>                        
+            <div class="col-md-4 col-sm-4">
+                <%= render 'avisos/avisos_sidebar' %>
+                <%= render 'eventos/eventos_sidebar' %>
+            </div> 
+       	</div>                                                   
+    </div>
+</div>

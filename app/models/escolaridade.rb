@@ -4,7 +4,11 @@ class Escolaridade < ActiveRecord::Base
 	before_save :upcase_all
 	before_create :set_status
 
-	validates :nome, length: { maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"}
+	STRING_REGEX = /\A[a-z A-Z]+\z/
+
+	validates :nome, length:{maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"},
+							format:{with: STRING_REGEX, message:"Somente letras é permitido"}, presence: true
+	
 	enum status: { ativo: '1', inativo: '0' }
 	
 	def upcase_all

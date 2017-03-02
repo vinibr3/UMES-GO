@@ -17,4 +17,12 @@
 //= require jquery.remotipart
 //= require jquery-fileupload/basic
 //= require bootstrap-filestyle.min.js
+//= require jquery.flexslider-min
+//= require jquery.prettyPhoto.js
+//= require custom.js
+//= require filter.js
+//= require html5shiv.js
+//= require jquery.isotope.js
+//= require respond.min.js
+
 //= require_tree .

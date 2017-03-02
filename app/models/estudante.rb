@@ -34,7 +34,7 @@ class Estudante < ActiveRecord::Base
 	before_create :create_oauth_token, :create_chave_acesso
 
 	# validações
-	validates :nome, length: { maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"}, 
+	validates :nome, length: { maximum: 100, too_long: "Máximo de 100 caracteres permitidos!"}, 
 	                 format:{with: LETRAS, message:"Somente letras é permitido!"}, allow_blank: true
 	validates :email, uniqueness: true, format: {with: EMAIL_REGEX , on: :create}
 	validates :sexo, inclusion: @@GENEROS, allow_blank: true
@@ -44,10 +44,10 @@ class Estudante < ActiveRecord::Base
 	validates :setor, length:{maximum: 50}, allow_blank: true
 	validates :cep, length:{is: 8}, numericality: true, allow_blank: true
 	validates :cidade, length:{maximum: 30, too_long:"Máximo de 70 carectetes é permitidos!"}, format:{with: LETRAS}, allow_blank: true
-	validates :matricula, numericality: true, length:{maximum: 30}, allow_blank: true
+	validates :matricula, numericality: true, length:{maximum: 50}, allow_blank: true
 	validates :celular, length:{in: 10..11}, numericality: true, allow_blank: true
 	validates :numero, length:{maximum: 5}, numericality: true, allow_blank: true
-	validates :rg, numericality: true, allow_blank: true
+	validates :rg, numericality: { only_integer: true }, allow_blank: true
 	validates :cpf, numericality: true, length:{is: 11, too_long: "Necessário 11 caracteres.",  too_short: "Necessário 11 caracteres."}, allow_blank: true
 	validates :expedidor_rg, length:{maximum: 10, too_long:"Máximo de 10 caracteres permitidos!"}, 
 							 format:{with:STRING_REGEX, message: "Somente letras é permitido!"}, allow_blank: true

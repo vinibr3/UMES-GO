@@ -1,6 +1,9 @@
 <% if @carteirinha && @carteirinha.valid? %>
 	$('#carteirinha').html(null);
 	$('#carteirinha').html("<%= j(render @carteirinha) %>");
+	$('#btn-consulta').addClass('hide');
+	$('#btn-nova-consulta').removeClass('hide').addClass('show');
+	$('#csoon-page').addClass('text-center');
 <% else %>
 	<% flash[:alert] = "Código de Uso inválido ou Documento vencido." %>
 	$('#carteirinha').html(null);

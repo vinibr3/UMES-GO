@@ -270,11 +270,11 @@ ActiveAdmin.register Carteirinha do
               # Layout 
               c.layout_carteirinha = @estudante.entidade.layout_carteirinhas.last
             end
-            if @carteirinha.save! 
+            if @carteirinha.save 
               flash[:success] = "Carteirinha criada para o estudante: #{@estudante.nome}. Altere os dados de pagamento."
               render :edit
             else
-              flash[:error] = "Não foi possível criar carteirinha. @carteirinha.errors"
+              flash[:error] = "Não foi possível criar carteirinha. #{@carteirinha.errors.full_messages}"
               redirect_to :back
             end
           end  

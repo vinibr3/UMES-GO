@@ -1,31 +1,37 @@
-<h3 class="text-primary"> Carteira de Identifição Estudantil </h3>
+<div>
 	<%= form_for ([@estudante, @estudante.carteirinhas.build]) do |f| %>
-	<div class="col-md-12">
-		<div class="col-md-8">
-			<%= image_tag Entidade.entidade_padrao.layout_anverso.url, :class=>'img img-responsive' if Entidade.entidade_padrao.layout_anverso %>
+		<div class="row">
+		<div class="col-sm-12 col-md-12">
+			<h3 class="text-primary" style="margin-bottom: 30px;"> Carteira de Identifição Estudantil </h3>
+			<%= image_tag "carteirinha-modelo.png", :class=>'img img-responsive' %>
 		</div>
-		<div class="col-md-5">
+		<div class="col-sm-12 col-md-12">
 			<div class="checkbox"><br>
-				<p><strong>Valor:</strong>&nbsp;R$<%= @entidade.valor_carteirinha.to_f %> </p>
-				<%= f.hidden_field :valor_carteirinha, :value => @entidade.valor_carteirinha.to_f %>
-				<% if !@entidade.frete_carteirinha.blank? %>
-					<p><strong>Frete:</strong>&nbsp;R$<%= @entidade.frete_carteirinha %> </p>
-					<%= f.hidden_field :frete_carteirinha, :value => @entidade.frete_carteirinha %>
+				<p><strong>Valor:</strong>&nbsp;R$<%= @entidade.valor_carteirinha.to_f if @entidade %> </p>
+				<%= f.hidden_field :valor_carteirinha, :value => @entidade.valor_carteirinha.to_f if @entidade%>
+				<% if @entidade && !@entidade.frete_carteirinha.blank? %>
+					<p><strong>Frete:</strong>&nbsp;R$<%= @entidade.frete_carteirinha if @entidade %> </p>
+					<%= f.hidden_field :frete_carteirinha, :value => @entidade.frete_carteirinha  if @entidade%>
 				<%end%>
 				<label>
 					<%= f.check_box :termos %> 
-					<small style="font-size: 12px;"> Aceito os <a class="text-primary" href='#' >Termos de Serviço</a> </small>
+					<small style="font-size: 12px;"> Aceito os 
+						<%= link_to '',:class=>'text-primary', :style=>'margin-top: -7px;', 'data-toggle'=>'modal', "data-target"=>"#termos-de-servico-modal" do %>
+						<span class="glyphicon glyphicon-pencil" style="color: #FFF"> </span>
+						Termos de Serviço
+						<%end%>
+					</small>
 				</label>
 			</div>
 			<div class="input-group" role="group">
 				<span class="input-group-addon bg-success"><strong>Total R$</strong></span>
 				<%= f.label :total, @entidade.valor_carteirinha.to_f+@entidade.frete_carteirinha.to_f, :id=> 'carteirinha_valor', 
-							:size=>'4', :class=>'form-control' %>
+							:size=>'4', :class=>'form-control' if @entidade %>
 				<span class="input-group-btn" id="pagar_agora">
 					<%= f.submit "Pagar Agora", :class=>'btn btn-success' %>
 				</span>
 			</div>
 		</div>
-	</div>
+		</div>
 	<%end%>
-	
+</div>

@@ -42,6 +42,9 @@ class AdminUser < ActiveRecord::Base
   validates :password, :password_confirmation, presence: true, on: :create
   validates :password, confirmation: true
 
+  before_create :reset_password 
+  before_update :reset_password
+
   def cidade_nome
     self.cidade.nome if self.cidade
   end
@@ -57,6 +60,10 @@ class AdminUser < ActiveRecord::Base
   def estado_id
     estado = self.cidade.estado if self.cidade
     estado.id if estado
+  end
+
+  def reset_password
+    self.password = Devise.friendly_token if self.inativo?
   end
 
   private    

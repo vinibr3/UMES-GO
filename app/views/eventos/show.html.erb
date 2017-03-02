@@ -1,7 +1,30 @@
-<div class="">
-	<h2> <%= @evento.titulo if @evento.titulo %> </h2>
-	<span><strong>Data:</strong> <%=  @evento.data.strftime("%d/%m/%Y") if @evento.data %> </span> &nbsp; &nbsp;
-	<span><strong>Local:</strong> <%= @evento.local if @evento.local %> <span> 
-	<p><%= image_tag @evento.folder.url if @evento.folder %></p>
-	<p> <%= @evento.texto.html_safe if @evento.texto %></p>
+<div class="row">
+    <div class="col-md-12">
+        <div class="blog">
+            <!-- Blog Posts -->
+            <div class="col-md-8 col-sm-8">
+                <section>
+	                <div class="posts">
+						<div class="entry">
+						   <h2> <%= @evento.titulo if @evento.titulo %> </h2>
+						    <!-- Meta details -->
+						    <div class="meta">
+						         <i class="fa fa-calendar"></i><span><strong>Data:</strong> <%=  @evento.data.strftime("%d/%m/%Y  %H:%M") if @evento.data %> </span> 
+						         <i class="fa fa-user"></i><span><strong>Local:</strong> <%= @evento.local if @evento.local %> <span> 
+						    </div>
+						    <!-- Thumbnail -->
+						    <div class="">
+						      <%= image_tag @evento.folder.url, class:'img img-responsive' if @evento.folder %>
+						    </div>
+						   <p> <%= @evento.texto.html_safe if @evento.texto %></p>
+						</div>                     
+	                </div>
+                </section>
+            </div>                        
+            <div class="col-md-4 col-sm-4">
+                <%= render 'avisos/avisos_sidebar' %>
+                <%= render 'eventos/eventos_sidebar' %>
+            </div> 
+       	</div>                                                   
+    </div>
 </div>

@@ -1,0 +1,16 @@
+<section>
+<div class="sidebar">
+	<div class="widget">
+		<h4></span>Avisos </h4>
+		<ul>
+			<% @avisos.each do |aviso| %>
+				<li> 
+					<div class="bg-danger">
+						<p> <%= aviso.aviso %></p>
+					</div>
+				</li>
+			<% end if @avisos %>
+		</ul>
+	</div>							
+</div>
+</section>

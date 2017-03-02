@@ -15,11 +15,12 @@
 @import "magnific-popup";
 @import "bootstrap-sprockets";
 @import "bootstrap";
+@import "flexslider";
+@import "style";
+@import "blue";
+@import "prettyPhoto";
+@import "font-awesome.min";
 
-
-body{
-	margin-top: 60px;
-}
 
 /*flash*/
 .alert-error {
@@ -67,4 +68,14 @@ body{
 
 .filename-link {
     font-size: 1em;
+}
+
+/* modals */
+
+.modal-header h4{
+    color: #FFF;
+}
+
+.modal-bady > div{
+    
 }

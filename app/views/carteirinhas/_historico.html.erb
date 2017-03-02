@@ -1,3 +1,4 @@
+<div style="margin-top: 20px;">
 <h4 class="text-primary"> Histórico de Solicitações </h4>
 	<% @carteirinhas.each do |carteirinha| %>
 		<div class="col-md-12">
@@ -27,3 +28,4 @@
 <% if @carteirinhas.empty? %>
 	<%= render inline: "<div style='text-align:center'><p> Não há dados a serem mostrados </p></div>" %>
 <%end%>
+</div>

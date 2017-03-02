@@ -223,7 +223,7 @@ ActiveAdmin.register Estudante do
   end
 
   after_create do |estudante|
-    #EstudanteNotificacoes.create_notificacoes(estudante).deliver_later
+    #EstudanteNotificacoes.create_notificacoes(estudante).deliver_now
   end
 
   # Actions

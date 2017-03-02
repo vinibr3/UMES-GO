@@ -1,32 +1,43 @@
-<div class="container">
-	<div class="row">
-		<div class="col-sm-4 col-sm-offset-4">
-		<h2>Contato </h2>
-		<%= form_for :contato , url: contatos_path, html:{:class=>'form-horizontal'} do |f| %>
-			<div class="form-group">
-				<%= f.label :nome, :class=>'control-label' %>
-				<%= f.text_field :nome, :class=>'form-control', :placeholder=>'Nome'%>
-			</div>
-			<div class="form-group">
-				<%= f.label :email %>
+<!-- Contact form -->
+<div class="form">
+	<h5>Formulário de contato</h5>
+    <hr />
+	<%= form_for :contato , url: contatos_path, html:{:class=>'form-horizontal'} do |f| %>
+		<div class="form-group">
+			<%= f.label :nome, :class=>'control-label col-md-3' %>
+			<div class="col-md-9">
+                <%= f.text_field :nome, :class=>'form-control', :placeholder=>'Nome'%>                          
+            </div>
+		</div>
+		<div class="form-group">
+			<%= f.label :email, :class=>'control-label col-md-3' %>
+			<div class="col-md-9">
 				<%= f.text_field :email, :class=>'form-control', :placeholder=>'Email' %>
 			</div>
-			<div class="form-group">
-				<%= f.label :telefone %>
+		</div>
+		<div class="form-group">
+			<%= f.label :telefone, :class=>'control-label col-md-3' %>
+			<div class="col-md-9">
 				<%= f.text_field :telefone, :class=>'form-control', :placeholder=>'Telefone' %>
 			</div>
-			<div class="form-group">
-				<%= f.label :assunto %>
+		</div>
+		<div class="form-group">
+			<%= f.label :assunto, :class=>'control-label col-md-3' %>
+			<div class="col-md-9">
 				<%= f.text_field :assunto,:class=>'form-control', :placeholder=>'Assunto' %>
-			</div> 
-			<div class="form-group">
-				<%= f.label :mensagem %>
+			</div>
+		</div> 
+		<div class="form-group">
+			<%= f.label :mensagem, :class=>'control-label col-md-3' %>
+			<div class="col-md-9">
 				<%= f.text_area :mensagem,:class=>'form-control', rows: '6', :placeholder=>'Mensagem aqui'  %>
 			</div>
-			<div class="actions form-group">
-				<%= f.submit "Enviar", :class=>'btn btn-success' %>
-			</div>
-		<% end %>
 		</div>
-	</div>
+		<!-- Buttons -->
+		<div class="col-md-9 col-md-offset-3">
+			<%= f.submit "Enviar", :class=>"btn btn-info" %>
+		</div>
+	<% end %>
 </div>
+<hr />
+		

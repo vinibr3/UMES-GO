@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  
+
   devise_for :admin_users, ActiveAdmin::Devise.config
   begin
     ActiveAdmin.routes(self)
@@ -9,16 +9,17 @@ Rails.application.routes.draw do
 
  
   get 'pages/home',           to:"pages#index",          as: :home
+  get 'pages/sobre',           to:"pages#sobre",         as: :sobre
   get 'pages/meia_entrada',   to:"pages#meia_entrada",   as: :meia_entrada
-  get 'pages/noticias',       to:"pages#noticias",       as: :noticias
   get 'pages/consulta',       to:"pages#consulta",       as: :consulta
   get 'pages/contato',        to:"pages#contato",        as: :contato
-  get 'pages/login',          to:"pages#login",          as: :login
-
 
   resources :estudantes, only: [:show, :update] do 
     resources :carteirinhas, only: [:new, :show, :autenticacao, :create]
   end
+
+  resources :noticias, only: [:index, :show]
+  resources :eventos, only: [:index, :show]
   
   post 'estudantes/senha',   to:"estudantes#update_password", as: :alterar_password
   get 'entidades/escolaridades', to:"entidades#escolaridades"

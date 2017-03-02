@@ -1,0 +1,33 @@
+<!-- Header starts -->
+		<header>
+		   <div class="container">
+			  <div class="row">
+				 <div class="col-md-8 col-sm-8">
+					<!-- Logo and site link -->
+					<div class="logo">
+					   <%= link_to root_path do %>
+					   		<%=image_tag("logo-grande.png", alt:"logo", :class=>'img img-responsive', :id => 'logo-image')%>
+					   <% end %>
+					</div>
+				 </div>				 
+				 <div class="col-md-4 col-sm-4">
+					<div class="list pull-right">
+						<!-- Add your phone number here -->
+					   <div style="text-align: center;">
+							<% if estudante_signed_in? %>
+								<%= link_to estudante_path(current_estudante), class:"btn btn-sucess" do  %>
+									<%= presentation_name(current_estudante.nome) %>
+									<span class="glyphicon glyphicon-user text-primary"></span>
+								<% end %>
+								<%= link_to 'Sair', destroy_estudante_session_path, :method=>:delete, class:'btn btn-warning' %>
+						 	<%else%>
+								<%= link_to 'Login' , new_estudante_session_path, class:'btn btn-success' %>
+								<%= link_to 'Cadastrar', new_estudante_registration_path, class:'btn btn-warning' %>
+							<%end%>
+					   </div>				   				   
+					</div>
+				 </div>
+			  </div>
+		   </div>
+		</header>
+		<!--/ Header ends -->

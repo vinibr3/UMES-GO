@@ -3,11 +3,13 @@ class Curso < ActiveRecord::Base
 	belongs_to :escolaridade
 	#belongs_to :instituicao_ensino
 	
+	LETRAS = /[A-Z a-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+/
+
 	before_create :set_status
 
 	enum status: {ativo: '1', inativo: '0'}
 
-	validates :nome, length: { maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"}
+	validates :curso_serie, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!."}, format:{with: LETRAS}, allow_blank: true
 	#validates_associated :escolaridade
 	validates_presence_of :nome, :escolaridade     
 

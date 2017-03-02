@@ -1,7 +1,13 @@
 class PagesController < ApplicationController
+  
   def index
   	 @avisos = Aviso.all
      @eventos = Evento.all
+     @noticias = Noticia.order(:created_at).last(2)
+  end
+
+  def sobre
+
   end
 
   def meia_entrada
@@ -14,10 +20,6 @@ class PagesController < ApplicationController
 
   def consulta
     
-  end
-
-  def login
-  	redirect_to new_estudante_session_path
   end
 
 private

@@ -1,2 +1,121 @@
-<%=  render 'avisos/avisos'%>
-<%=  render template: 'eventos/index' %>
+<!-- Slider (Flex Slider -->
+            
+				<div class="flexslider">
+				  <ul class="slides">
+					  <!-- Each slide should be enclosed inside li tag. -->
+					  
+					  <!-- Slide #1 -->
+					<li>
+					  <!-- Image -->
+					  <%= image_tag 'fotos/1.jpg' %>
+					  <!-- Caption -->
+					  <div class="flex-caption">
+						 <!-- Title -->
+						 <h3><span>Manifestação em Brasília</span></h3>
+						 <!-- Para -->
+						 <p>A UNE, UBES, UJS e a UMESGO realizaram manifestação em Brasília contra a PEC 241. </p>
+					  </div>
+					</li>
+					
+					
+					<li>
+					  <%= image_tag 'fotos/2.jpg' %>
+					  <div class="flex-caption">
+						 <h3><span>Nova Carteira de Estudante</span></h3>
+						 <p>Carteirinha de estudante agora com novos mecanismos de segurança.</p>
+					  </div>                  
+					</li>
+					
+					<li>
+					  <%= image_tag 'fotos/3.jpg' %>
+					  <div class="flex-caption">
+						 <h3><span>Meia entrada em diversos estabelecimentos</span></h3>
+						 <p>A Carteira de Identificação Estudantil garante meia entrada em cinemas, teatros, estádios, shows...  </p>
+					  </div>                  
+					</li>
+					
+				  </ul>
+				</div>
+            
+            <!-- Slider ends -->
+
+				<div class="main-content">
+				  <div class="row">
+					<div class="col-md-7">
+						<div class="hero">
+                        <!-- Title. Don't forget the <span> tag -->
+                        <h3><span>UMESGO Adverte</span></h3>
+                        <!-- para -->
+                        <p>Confecção da Carteira de Identificação Estudantil</p>
+         				</div>					  
+					  <div class="text-center" style="background-color: #FFF;">
+					  	<span class="glyphicon glyphicon-warning-sign" style="font-size: 100px; color: #15458c;"></span>
+					  </div>
+					  <p>Cuidado ao fazer sua Carteira de Estudante com qualquer pessoa ou instituição que não estiver devidamente legalizada considerando que a lei estabelece o direito à meia-entrada mediante a apresentação da Carteira de Identificação Estudantil (CIE), emitida conforme modelo único padronizado e publicamente disponibilizado, com Certificado de Atributo.</p>
+					  <p> O Certificado de Atributo é um tipo de certificado que tem validade jurídica quando assinado com certificado digital ICP-Brasil de propriedade da entidade que conceda determinado título de qualificação (atributo). A partir dessa premissa, todas as prerrogativas legais e técnicas são garantidas ao certificado de atributo, ou seja, a integridade, a autenticidade, o não-repúdio e o valor legal.</p>
+					  <p> As entidades autorizadas por lei <a href="http://www.planalto.gov.br/ccivil_03/_ato2011-2014/2013/lei/l12933.htm">(Lei 12.933) </a> a emitir a CIE, em posse dos seus certificados digitais ICP-Brasil e fazendo uso da autonomia a elas conferidas por lei, declararão eletronicamente se determinada pessoa é ou não estudante. Assim, a entidade emissora responsabiliza-se pela emissão do certificado de atributo, a autenticidade das informações constantes no atributo e a validade do documento. </p>		
+					</div>
+					<div class="col-md-5">
+					  <div class="main-box">
+						<h4>Carteira de Identificação Estudantil</h4>
+						<%= image_tag 'carteirinha-modelo.png', class:"img img-responsive", :alt=>"Carteira de Identificação Estudantil" %>
+						<h5> Documentos necessários </h5>
+						<ul>
+							<li><i class="fa fa-angle-right"></i>Foto da face (preferencialmente 3x4) </li>
+							<li><i class="fa fa-angle-right"></i>Cópia do RG </li>
+							<li><i class="fa fa-angle-right"></i>Cópia do CPF </li>
+							<li><i class="fa fa-angle-right"></i>Comprovante de matricula atualizado </li>
+						</ul>
+						<div class="button">
+						  <%= button_solicitacao_helper %>
+						</div>
+					  </div>
+					</div>
+				  </div>
+				  <div class="row">
+				  	<div class="col-sm-6 col-sm-offset-3 text-center" style="height: 50%;"> 
+						<%= image_tag 'une-umes-ubes.png', class:"img img-responsive", :alt=>"Carteira de Identificação Estudantil", :style=>"margin-top: 20px;" %>					  
+					</div>
+				  </div>
+				</div>
+			
+				<div class="bor"></div>
+				
+				<div class="row">
+					<div class="col-md-4 col-sm-4">
+						<%= render 'noticias/noticias_sidebar' %>
+					</div>
+					<div class="col-md-8 col-sm-8">
+						<div class="row">
+							<div class="col-md-6">
+								<%= render 'eventos/eventos_sidebar' %>
+							</div>
+							<div class="col-md-6">
+								<%=  render 'avisos/avisos_sidebar' %>
+							</div>
+                        </div>
+					</div>
+				</div>
+				<div class="bor"></div>
+				
+				<!-- Vídeos starts. Note down the class name before editing. -->
+				
+				<div class="rposts">
+				   <h4>Vídeos</h4>
+					<div class="row">
+						<div class="col-md-4  col-sm-6 col-xs-12 text-center">
+							<h5>A história da Meia-entrada</h5>
+							<iframe  src="https://www.youtube.com/embed/RMByad9b38o" frameborder="0" allowfullscreen></iframe>
+						</div>
+						<div class="col-md-4  col-sm-6 col-xs-12 text-center">
+							<h5>Nova Carteira de Identificação Estudantil</h5>
+							<iframe  src="https://www.youtube.com/embed/BeFMxXl-j18" frameborder="0" allowfullscreen></iframe>                 	 
+						</div>
+						<div class="col-md-4  col-sm-6 col-xs-12 text-center">
+							<h5>OCUPA AÇÃO GO</h5> 
+							<iframe  src="https://www.youtube.com/embed/KXAWmDQW2ek" frameborder="0" allowfullscreen></iframe>
+						</div>  
+				   </div>
+				</div>
+				
+				<!-- Vídeos ends -->  

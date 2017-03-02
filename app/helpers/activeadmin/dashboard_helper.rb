@@ -1,8 +1,8 @@
 module Activeadmin::DashboardHelper
 	def estudantes_pie_3d_chart data, total
 		total_formated = number_with_delimiter(total, delimiter: ".")
-		manual_percent = (data[0]/total)*100
-		site_percent = (data[1]/total)*100
+		manual_percent = ((data[0].to_f/total)*100).round(1) if data[0]
+		site_percent = ((data[1].to_f/total)*100).round(1) if data[1]
 		chart = Gchart.pie_3d(:size => '800x200', :title => "Estudantes Cadastrados (#{total_formated})", 
                                      :data => data , :stacked => false, :bg => 'ffffff', :legend_position => "bottom",
                                      :labels => ["#{manual_percent}%", "#{site_percent}%"], :bar_colors => bar_colors,
@@ -14,7 +14,7 @@ module Activeadmin::DashboardHelper
 		total_formated = number_with_delimiter(total, delimiter: ".")
 		chart = Gchart.pie_3d(:size => '800x200', :title => "Carteirinhas (#{total_formated})", :bg => 'ffffff', :bar_colors => bar_colors,
                                      :data => carteirinhas_count.map{|k,v| v} , :stacked => false, :legend_position => "right",
-                                     :labels => carteirinhas_count.map{|k,v| number_to_percentage(v*100/total, precision: 1) if total > 0},
+                                     :labels => carteirinhas_count.map{|k,v| number_to_percentage((v.to_f*100/total).round(1), precision: 1) if total > 0},
                                      :legend => carteirinhas_count.map{|k,v| k})
 		image_tag  chart, class:'img img-responsive'
 	end
@@ -23,7 +23,7 @@ module Activeadmin::DashboardHelper
 		total_formated = number_with_delimiter(total, delimiter: ".")
 		chart = Gchart.pie_3d(:size => '800x200', :title => "Cursos por Escolaridade (#{total_formated})", :bg => 'ffffff',
                                      :data => cursos_por_escolaridade.map{|k,v| v} , :stacked => false, :legend_position => "right",
-                                     :labels => cursos_por_escolaridade.map{|k,v| number_to_percentage(v*100/total, precision: 1) if total > 0},
+                                     :labels => cursos_por_escolaridade.map{|k,v| number_to_percentage((v.to_f*100/total).round(1), precision: 1) if total > 0},
                                      :legend => cursos_por_escolaridade.map{|k,v| k.mb_chars.titleize}, :bar_colors => bar_colors)
 		image_tag  chart, class:'img img-responsive'
 	end
@@ -32,10 +32,9 @@ module Activeadmin::DashboardHelper
 		total_formated = number_with_delimiter(total, delimiter: ".")
 		chart = Gchart.line(:size => '800x200', :title => "Carteiras Aprovadas por Usuarios (#{total_formated})", :bg => 'ffffff',
                                      :data => carteirinhas_by_usuarios.map{|k,v| v} , :stacked => false, :legend_position => "right",
-                                     :labels => carteirinhas_by_usuarios.map{|k,v| number_to_percentage(v*100/total, precision: 1) if total > 0},
+                                     :labels => carteirinhas_by_usuarios.map{|k,v| number_to_percentage((v.to_f*100/total).round(1), precision: 1) if total > 0},
                                      :legend => carteirinhas_by_usuarios.map{|k,v| k.mb_chars.titleize}, :bar_colors => bar_colors,
-                                     :axis_labels => ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'], 
-                    				 :axis_range => [[0,100,20], [0,20,5]])
+                                     :axis_labels => [['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],[0, ]]) 
 		image_tag  chart, class:'img img-responsive'
 	end
 

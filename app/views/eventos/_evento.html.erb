@@ -1,0 +1,14 @@
+<div class="entry">
+   <h2><%= link_to evento.titulo, evento_path(evento) %></h2>
+      <!-- Meta details -->
+      <div class="meta">
+         <i class="fa fa-calendar"></i> <%= evento.data.strftime("%d/%m/%Y") if evento.created_at %> <%= evento.data.strftime("%H/%m") if evento.created_at %><i class="fa fa-local"></i> <%= evento.local %>
+      </div>
+      <!-- Thumbnail -->
+      <div class="bthumb">
+         <%= image_tag evento.folder.url, class:'img img-responsive' if evento.folder %>
+      </div>
+      <p>
+         <%= evento.texto if evento.texto %>
+      </p>
+</div>

@@ -1,20 +1,29 @@
-<div id="flash_message">
+ <div id="flash_message"></div>
+<div class="row">
+   <div class="col-md-12">
+   <!-- Coming soon starts -->
+      <div class="csoon">
+         <br/>
+              <div class="csoon-page text-center">
+                  <h3>Você produtor de evento artístico-cultural e esportivo, consulte aqui a validade da Carteira de Identificação Estudantil. </h3>     
+                  <h4 class="soon-small">É rápido e fácil, evite falsificações. Apenas informe o código de uso da CIE abaixo.</h4>
+                  <!-- Subscribe form -->
+                  <div class="soon-subscribe">
+                    <%= form_for :carteirinha, url: consulta_carteirinha_path, method: 'post', html:{:class=>"form-inline"}, remote: true do |f| %>       
+                      <div class="form-group">
+                          <%= f.text_field :codigo_uso , :class=>"form-control", :placeholder=>"Código de uso", :style=>"margin-bottom: 10px;" %> 
+                          <%= recaptcha_tags %>   
+                      </div><br>
+                      <%= f.submit "Consultar", :class=>'btn btn-info', :id=>"btn-consulta", :style=>"margin-top: 10px;" %> 
+                    <% end %>
+                    <%= link_to "Nova consulta", consulta_path ,:class=>'btn btn-info hide', :id=>"btn-nova-consulta", :style=>"margin-top: 10px;" %>      
+                 </div>
+              </div>
+              <div class="col-sm-6 col-sm-offset-3 col-md-6 col-md-offset-3" id="carteirinha" style="margin-bottom: 20px">
 
-</div> 
-<div>
-   <p class="soon-med">Você produtor de eventos artísiticos-culturais e esportivos consulte aqui a autenticidade da Carteira de Identificação Estudantil.</p>                                                                                
-   <div class="soon-subscribe">
-      <%= form_for :carteirinha, url: consulta_carteirinha_path, method: 'post', html:{:class=>"form-inline"}, remote: true do |f| %>             
-         <div class="form-group">
-            <%= f.text_field :codigo_uso , :class=>"form-control", :placeholder=>"Código de uso" %>      
-         </div>
-         </br>
-         <%= recaptcha_tags %>
-         </br>
-         <%= f.submit "Consultar", :class=>'btn btn-info' %>  
-      <% end %>            
-      <div id="carteirinha">
-
+              </div>
       </div>
-   </div>                                       
+   <br/>
+   <br/>
+   </div>
 </div>

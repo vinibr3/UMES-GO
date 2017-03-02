@@ -5,14 +5,12 @@
 		<%= helper_title current_estudante.atributos_nao_preenchidos %>
 	</div>
 	<div class="row">
-		<div class="col-md-5">
+		<div class="col-md-6">
 			<%= render 'estudantes/show'%>
 		</div>
-		<div class="col-md-6 col-md-offset-1">
+		<div class="col-md-5 col-md-offset-1">
 			<div class="panel-body" >
 				<%= render template: 'carteirinhas/new'%>
-			</div>
-			<div class="">
 				<%= render 'carteirinhas/historico', collection: @carteirinhas %>
 			</div> 
 		</div>
@@ -22,3 +20,4 @@
 <%= render 'edit_dados_estudantis_modal' %>
 <%= render 'edit_endereco_modal'         %>
 <%= render 'edit_password_modal'         %>
+<%= render 'termos_de_servico_modal'     %>

@@ -7,12 +7,25 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
+	<%= render 'layouts/header' %>
 	<%= render 'layouts/navigation' %>
-	<div class="container">
-		<div class="row">
+	<div class="content">	
+		<div class="container">
 			<%= render 'layouts/messages' %>
 			<%= yield %>
 		</div>
 	</div>
+	<%= render 'layouts/footer' %>
+	<script>
+	/* Flex Slider */
+	$(window).load(function() {
+		$('.flexslider').flexslider({
+			animation: "slide",
+			controlNav: true,
+			pauseOnHover: true,
+			slideshowSpeed: 4000
+		 });
+	});
+</script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+<!-- Each posts should be enclosed inside "entry" class" -->
+<!-- Post one -->
+<div class="entry">
+   <h2><%= link_to noticia.titulo, noticia_path(noticia) %></h2>
+      <!-- Meta details -->
+      <div class="meta">
+         <i class="fa fa-calendar"></i> <%= noticia.created_at.strftime("%d/%m/%Y") if noticia.created_at %> <i class="fa fa-user"></i> <%= noticia.autor %>
+      </div>
+      <!-- Thumbnail -->
+      <div class="bthumb">
+         <%= image_tag noticia.foto.url, class:'img img-responsive' if noticia.foto %>
+      </div>
+      <p>
+         <%= noticia.body.first(750) if noticia.body %>
+      </p>
+      <div class="button">
+         <%= link_to 'Ler mais', noticia_path(noticia) %>
+      </div>
+</div>
