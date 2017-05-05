@@ -4,10 +4,10 @@ class Escolaridade < ActiveRecord::Base
 	before_save :upcase_all
 	before_create :set_status
 
-	STRING_REGEX = /\A[a-z A-Z]+\z/
+	LETRAS = /[A-Z a-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+/
 
 	validates :nome, length:{maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"},
-							format:{with: STRING_REGEX, message:"Somente letras é permitido"}, presence: true
+							format:{with: LETRAS, message:"Somente letras é permitido"}, presence: true
 	
 	enum status: { ativo: '1', inativo: '0' }
 	
@@ -20,7 +20,7 @@ class Escolaridade < ActiveRecord::Base
 	end
 
 	def self.escolaridades
-		where(status: "1")
+		order(:nome).where(status: "1")
 	end
 
 	def self.cursos id

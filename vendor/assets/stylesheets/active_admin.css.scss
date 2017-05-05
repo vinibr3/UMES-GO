@@ -16,3 +16,37 @@
 // For example, to change the default status-tag color:
 //
 //   .status_tag { background: #6090DB; }
+
+/* Jquery UI Autocomplete */
+.ui-autocomplete { 
+	position: absolute; 
+	cursor: default; 
+	background: $body-background-color;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    z-index: 1511; 
+}
+
+.ui-autocomplete li{
+	padding: 2px 0px 2px 5px;
+}
+
+.ui-autocomplete-loading { 
+	background: $body-background-color; 
+}
+
+.ui-menu .ui-menu-item a.ui-corner-all:hover, .ui-menu .ui-menu-item a.ui-corner-all:focus, .ui-menu .ui-menu-item a.ui-corner-all:active {
+    background: $secondary-color !important;
+    color:#000;
+    border-radius:0;
+    padding: 2px;
+}
+
+.ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+    background: $secondary-color;
+    border: none;
+    color:$text-color;
+    border-radius:0;
+    font-weight: normal;
+}

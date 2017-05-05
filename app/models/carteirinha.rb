@@ -36,11 +36,10 @@ class Carteirinha < ActiveRecord::Base
 
 	# validações
 	validates :nome, length: { maximum: 70, too_long: "Máximo de 70 caracteres permitidos"}, format:{with: LETRAS, message:"Somente letras é permitido!"}
-	validates :instituicao_ensino, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!"}
 	validates :curso_serie, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!"}
 	validates :matricula, numericality: true, length:{maximum: 50, too_long: "Máximo de 50 caracteres permitidos!"}, allow_blank: true
 	validates :rg, numericality: { only_integer: true }
-	validates :instituicao_ensino, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!."}, format: {with: LETRAS}, allow_blank: true
+	validates :instituicao_ensino, length:{maximum: 200, too_long: "Máximo de 200 caracteres permitidos!."}, format: {with: LETRAS}, allow_blank: true
 	validates :cidade_inst_ensino, length:{maximum: 40, too_long:"Máximo de 70 carectetes é permitidos!"}, format:{with: LETRAS}, allow_blank: true
 	validates :curso_serie, length:{maximum: 100, too_long: "Máximo de 100 caracteres permitidos!."}, format:{with: LETRAS}, allow_blank: true
 	validates :termos, acceptance: true
@@ -50,7 +49,7 @@ class Carteirinha < ActiveRecord::Base
 							 						 format:{with:STRING_REGEX, message: "Somente letras é permitido!"}, allow_blank: true
 	validates :uf_expedidor_rg, length:{is: 2}, format:{with:STRING_REGEX}, allow_blank: true
 	validates :uf_inst_ensino, length:{is: 2}, format:{with:STRING_REGEX}, allow_blank: true
-	validates :escolaridade, length:{maximum: 30, too_long: "Máximo de 30 caracteres permitidos!"},
+	validates :escolaridade, length:{maximum: 70, too_long: "Máximo de 70 caracteres permitidos!"},
 							             format:{with:LETRAS, message:"Somente letras é permitido"}, allow_blank: true
 	#foto
 	validates_attachment_size :foto, :less_than => 1.megabytes

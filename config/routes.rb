@@ -46,6 +46,9 @@ Rails.application.routes.draw do
     resource :cidades, only: [:show]
   end
 
+  # Rota para automplete de instituicao_ensino_controller
+  resources :instituicao_ensinos, only: [:index]
+
   # Rotas Pagseguro Payment
   get 'payment/checkout',          to:'checkout#create',        as: :checkout
   get 'payment/confirmacao',      to:'checkout#confirmacao'

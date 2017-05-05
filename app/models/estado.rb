@@ -13,7 +13,7 @@ class Estado < ActiveRecord::Base
  validates_length_of :sigla, is:2, wrong_length:"Tamanho de #{count} caracteres."
 
  def self.siglas
- 	select(:sigla).map{|estado| estado.sigla}
+ 	order(:sigla).map(&:sigla)
  end
 
 end

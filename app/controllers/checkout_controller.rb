@@ -75,7 +75,9 @@ class CheckoutController < ApplicationController
     #
     # Se estiver tudo certo, redireciona o comprador para o PagSeguro.
     if response.errors.any?
-      raise response.errors.join("\n")
+      flash[:alert] = response.errors
+      redirect_to :back
+      #raise response.errors.join("\n")
     else
       redirect_to response.url
     end

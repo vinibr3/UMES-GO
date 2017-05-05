@@ -144,9 +144,10 @@ ActiveAdmin.register Carteirinha do
                 f.input :xerox_cpf, :hint => "Imagem Atual: #{f.object.xerox_cpf_file_name}"
             end
             f.inputs "Dados Escolares" do
-                f.input :instituicao_ensino, collection: InstituicaoEnsino.all.map{|i| [i.nome, i.nome] }, include_blank: false
-                f.input :curso_serie, collection: Curso.all.map{|c| [c.nome, c.nome]}, include_blank: false, label: "Curso"
-                f.input :escolaridade, collection: Escolaridade.all.map{|e| [e.nome, e.nome]}, include_blank: false, label: "Escolaridade"
+                f.input :instituicao_ensino, :input_html=>{:id=>"instituicao-ensino-autocomplete-admin"}, label: "Instituição de ensino"
+                f.input :escolaridade, collection: Escolaridade.order(:nome).map(&:nome), include_blank: false, :input_html=>{:id=>"escolaridades-select"}, label: "Escolaridade"
+                f.input :curso_serie, collection: Curso.order(:nome).where(escolaridade_id: Escolaridade.find_by_nome(f.object.escolaridade).id).map(&:nome), 
+                        include_blank: false, label: "Curso", :input_html=>{id: "cursos-select"}
                 f.input :matricula
                 f.input :comprovante_matricula, :hint => "Imagem Atual: #{f.object.comprovante_matricula_file_name}"
             end
@@ -174,6 +175,15 @@ ActiveAdmin.register Carteirinha do
                 f.input :transaction_id, label: "Transação"
             end
             f.actions
+      # Script para escolher 'curso' a partir de 'escolaridade'
+    render inline: "<script type='text/javascript'> $('#escolaridades-select').change(function(){ 
+      var escolaridade_id = $('#escolaridades-select').val();
+      var url = '/escolaridades/'.concat(escolaridade_id).concat('/cursos.js');
+      $.ajax({
+          url: url,
+          dataType: 'script'
+        });
+      });</script>"
       render inline: "<script type='text/javascript'>
         $('#status-pagamento-select').change(function(){
           var status_pagamento = $('#status-pagamento-select').val();
@@ -182,7 +192,9 @@ ActiveAdmin.register Carteirinha do
             dataType: 'script'
           });
         });
-      </script>"
+        </script>"
+      render inline: "<script type='text/javascript'>
+        $('#instituicao-ensino-autocomplete-admin').autocomplete({source: '/admin/instituicao_ensinos/autocomplete'});</script>"
     end
 
     before_update do |carteirinha|

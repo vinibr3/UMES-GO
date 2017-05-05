@@ -11,7 +11,7 @@ ActiveAdmin.register Estudante do
                 :celular, :numero, :expedidor_rg, :uf_expedidor_rg,
                 :cidade_inst_ensino, :uf_inst_ensino, :xerox_cpf, 
                 :instituicao_ensino_id, :curso_id, :cidade_id, 
-                :entidade_id, :admin_user_id
+                :entidade_id, :admin_user_id, :instituicao_ensino_nome
 
   filter :email
   filter :nome
@@ -156,7 +156,7 @@ ActiveAdmin.register Estudante do
       f.input :cpf, label: "CPF"
       f.input :rg, label: "RG"
       f.input :expedidor_rg, label: "Expedidor RG"
-      f.input :uf_expedidor_rg, collection: Estado.all.map{|e| e.sigla} ,label: "UF Expedidor RG"
+      f.input :uf_expedidor_rg, collection: Estado.siglas ,label: "UF Expedidor RG"
       f.input :data_nascimento, label: "Data de Nascimento", as: :datepicker, datepicker_options: { day_names_min: ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"],
                                                                                                     month_names_short: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
                                                                                                     year_range: "1930:", show_anim: "slideDown", changeMonth: true, changeYear: true}
@@ -168,14 +168,13 @@ ActiveAdmin.register Estudante do
       f.input :xerox_cpf, :hint => "Imagem Atual: #{f.object.xerox_cpf_file_name}", label: "Xerox CPF"
     end
     f.inputs "Dados Estudantis" do
-      f.input :entidade, collection: Entidade.all.map{|e| [e.nome, e.id]}, prompt:"Selecione a Entidade", 
+      f.input :entidade, collection: Entidade.order(:nome).map{|e| [e.nome, e.id]}, prompt:"Selecione a Entidade", 
               label: "Entidade", include_blank: false
-      f.input :instituicao_ensino, collection: InstituicaoEnsino.all.map{|i| [i.nome, i.id] }, 
-              prompt: "Selecione a Instituição de Ensino", label: "Instituição de Ensino"  
+      f.input :instituicao_ensino_nome, :input_html=>{:id=>"instituicao-ensino-autocomplete-admin"}, label: "Instituição de ensino"
       f.input :escolaridade_id, :as => :select, prompt: "Selecione a Escolaridade", :input_html=>{:id=>"escolaridades-select"},
-              collection: Escolaridade.escolaridades.map{|e| [e.nome, e.id]}, label: "Escolaridade"    
+              collection: Escolaridade.escolaridades.map{|e| [e.nome, e.id]}, label: "Escolaridade"
       f.input :curso, :as => :select, prompt: "Selecione o Curso", :input_html=>{id: "cursos-select"}, 
-              collection: Curso.where(escolaridade_id: f.object.escolaridade_id).map{|c| [c.nome, c.id]}       
+              collection: Curso.order(:nome).where(escolaridade_id: f.object.escolaridade_id).map{|c| [c.nome.mb_chars.upcase, c.id]}       
       f.input :matricula, label: "Matrícula"
       f.input :comprovante_matricula, :hint => "Imagem Atual: #{f.object.comprovante_matricula_file_name}", label: "Comprovante de Matrícula"
     end
@@ -185,13 +184,13 @@ ActiveAdmin.register Estudante do
       f.input :complemento
       f.input :cep, label: "CEP"
       f.input :uf, prompt: "Selecione a UF", label: "UF", :input_html=>{:id=>"uf-select"}, include_blank: false,
-              collection: Estado.all.map{|e| [e.sigla, e.id]}
+              collection: Estado.order(:sigla).map{|e| [e.sigla, e.id]}
       f.input :cidade, :as => :select, prompt: "Selecione a Cidade", :input_html=>{:id=>"cidades-select"},
-              collection: Cidade.where(estado_id: f.object.estado_id).map{|c| [c.nome, c.id]}, include_blank: false
+              collection: Cidade.order("nome DESC").where(estado_id: f.object.estado_id).map{|c| [c.nome, c.id]}, include_blank: false
     end
     if current_admin_user.sim? && !f.object.new_record?
       f.inputs "Cadastro" do
-        f.input :admin_user, label: "Cadastrado Por", collection: AdminUser.all.map{|u| [u.nome, u.id]}
+        f.input :admin_user, label: "Cadastrado Por", collection: AdminUser.order(:nome).map{|u| [u.nome.mb_chars.upcase, u.id]}
       end
     end
     f.actions
@@ -213,6 +212,9 @@ ActiveAdmin.register Estudante do
           dataType: 'script'
         });
       });</script>"
+      # configura autocomplete para Instituicao de Ensino
+      render inline: "<script type='text/javascript'>
+    $('#instituicao-ensino-autocomplete-admin').autocomplete({source: '/admin/instituicao_ensinos/autocomplete'});</script>"
   end
 
   before_create do |estudante|

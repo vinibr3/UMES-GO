@@ -68,7 +68,7 @@ class Estudante < ActiveRecord::Base
 	validates_acceptance_of :termos
     
     validates_length_of :foto_file_name, :comprovante_matricula_file_name, :xerox_rg_file_name, :maximum => 50, :message => "Nome do arquivo deve ser menor que %{count} caracteres"
-  
+
 	public
 		def tem_carteirinha
 			!self.carteirinha.last.nil?
@@ -223,6 +223,25 @@ class Estudante < ActiveRecord::Base
 
 	def entidade_nome
 		self.entidade.nome if self.entidade
+	end
+
+	def instituicao_ensino_nome
+		self.instituicao_ensino.nome if self.instituicao_ensino
+	end
+
+	def instituicao_ensino_nome=(nome)
+		nome = nome.mb_chars.upcase
+		instituicao = InstituicaoEnsino.find_by_nome(nome)
+		if instituicao
+			self.instituicao_ensino = instituicao
+		else
+			instituicao = InstituicaoEnsino.new(nome: nome)
+			if instituicao.valid?
+				instituicao.save
+				instituicao = InstituicaoEnsino.find_by_nome(nome)
+				self.instituicao_ensino = instituicao
+			end
+		end
 	end
 
 	protected

@@ -93,7 +93,7 @@ ActiveAdmin.register LayoutCarteirinha do
 		f.inputs "Layout", multipart: true do 
 			f.input :anverso, label: "Frente", :hint => "Imagem Atual: #{f.object.anverso_file_name}"
 			f.input :verso, label: "Verso", :hint => "Imagem Atual: #{f.object.verso_file_name}"
-			f.input :entidade, collection: Entidade.all.map{|e| [e.nome, e.id]}, prompt: "Selecione Entidade", include_blank: false
+			f.input :entidade, collection: Entidade.order(:nome).map{|e| [e.nome, e.id]}, prompt: "Selecione Entidade", include_blank: false
 			f.input :tamanho_fonte, label: "Tamanho da Fonte"
 		end
 		panel "Informações" do

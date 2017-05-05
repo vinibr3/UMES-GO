@@ -4,8 +4,8 @@ class Api::CarteirinhasController < Api::AuthenticateBase
 	before_action :http_token_authentication, only: [:show, :create]
 
 	def index
-		status = Carteirinha.status_versao_impressa[2]
-		@carteirinhas = Carteirinha.where("status_versao_impressa = ? AND certificado = ?", status, "")
+		status = Carteirinha.status_versao_impressas[2]
+		@carteirinhas = Carteirinha.where("status_versao_impressa = ? AND certificado IS NULL", status)
 		if @carteirinhas.empty?
 			render_erro "Nenhuma Carteira de Identificação Estudantil com status #{status} encontrada.", 404
 		else

@@ -84,10 +84,14 @@ gem 'jquery-fileupload-rails', '~> 0.4.7'
 gem 'googlecharts', '~> 1.6', '>= 1.6.12'
 # Jquery flexslider
 gem 'flexslider', '~> 2.2'
+# auto complete input
+gem 'jquery-ui-rails'
+gem 'rails4-autocomplete', '~> 1.1', '>= 1.1.1'
 
 group :production do
- gem 'unicorn'
+	gem 'unicorn'
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw]
+#gem 'aws-sdk', '~> 2.8', '>= 2.8.11'

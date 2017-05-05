@@ -20,6 +20,7 @@
 @import "blue";
 @import "prettyPhoto";
 @import "font-awesome.min";
+@import "jquery-ui";
 
 
 /*flash*/
@@ -78,4 +79,35 @@
 
 .modal-bady > div{
     
+}
+
+/* Jquery UI Autocomplete */
+ul.ui-autocomplete{
+    position: absolute;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    cursor: default;
+    z-index: 1511;
+    li{
+        background-color: #FFF;
+        margin: 0;
+        padding: 2px 0px 2px 5px;
+    }
+
+    .ui-menu .ui-menu-item a.ui-corner-all:hover, .ui-menu .ui-menu-item a.ui-corner-all:focus, .ui-menu .ui-menu-item a.ui-corner-all:active {
+    background: #FFF !important;
+    color:#000;
+    border-radius:0;
+    padding: 2px;
+    }
+
+    .ui-state-hover, .ui-widget-content .ui-state-hover, .ui-widget-header .ui-state-hover, .ui-state-focus, .ui-widget-content .ui-state-focus, .ui-widget-header .ui-state-focus {
+        background: #1E90FF;
+        border: none;
+        border-radius:0;
+        font-weight: normal;
+        color: #FFF;
+    }
+
 }

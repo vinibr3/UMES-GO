@@ -11,13 +11,17 @@ class EstudantesController < ApplicationController
 	def update
 		@atribute_updated = estudante_params.map{|k,v| k}.first if request.format.js?
 		respond_to do |format|
-			if current_estudante.update(estudante_params)
-				format.html{ redirect_to current_estudante, notice: "Dados salvos com sucesso!" }
-				format.js
+			if InstituicaoEnsino.new(nome: estudante_params[:instituicao_ensino_nome]).valid?
+				if current_estudante.update(estudante_params)
+					format.html{ redirect_to current_estudante, notice: "Dados salvos com sucesso!" }
+					format.js
+				else
+					@estudante_errors = current_estudante.errors.full_messages.to_s
+					format.html{redirect_to current_estudante, alert: @estudante_errors }
+					format.js
+				end
 			else
-				@estudante_errors = current_estudante.errors.full_messages.to_s
-				format.html{redirect_to current_estudante, notice: @estudante_errors }
-				format.js
+				format.html{redirect_to current_estudante, alert: "Instituição de Ensino inválida, permitido somente letras."}
 			end
 		end
 	end
@@ -42,6 +46,6 @@ class EstudantesController < ApplicationController
 											  :instituicao_ensino_id, :curso_id, :matricula, :foto, 
 											  :comprovante_matricula, :xerox_rg, :email, :password, 
 											  :celular, :numero, :expedidor_rg, :uf_expedidor_rg, 
-											  :callback, :xerox_cpf, :entidade_id)
+											  :callback, :xerox_cpf, :entidade_id, :instituicao_ensino_nome)
 		end
 end

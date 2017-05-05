@@ -13,19 +13,22 @@
 						<div class="col-sm-10 col-sm-offset-1">
 							<div class="form-group">
 								<%= f.label :entidade, :class=>'control-label col-sm-4 col-sm-offset-1' %>
-								<div class="col-sm-6"><%= f.collection_select :entidade_id, Entidade.all, :id, :nome, {prompt: "Selecione Entidade", include_blank: false}, {:class=>'form-control'}%></div>
+								<div class="col-sm-6"><%= f.collection_select :entidade_id, Entidade.order(:nome), :id, :nome, {prompt: "Selecione Entidade", include_blank: false}, {:class=>'form-control'}%></div>
 							</div>
 							<div class="form-group">
 								<%= f.label :instituicao_ensino, "Instituição de Ensino", :class=>'control-label col-sm-4 col-sm-offset-1' %>
-								<div class="col-sm-6"><%= f.collection_select :instituicao_ensino_id, InstituicaoEnsino.all, :id, :nome, {prompt: "Selecione Instituição de Ensino", include_blank: false}, {:class=>'form-control'}%></div>
+								<div class="col-sm-6">
+								<%= f.text_field :instituicao_ensino_nome, data: {autocomplete_source: instituicao_ensinos_path}, :class=>"form-control" %>
+								</div>
 							</div>
+							
 							<div class="form-group">
 								<%= f.label :escolaridade, :class=>'control-label col-sm-4 col-sm-offset-1' %>
-								<div class="col-sm-6"><%= f.collection_select :escolaridade_id, Escolaridade.all, :id, :nome, {prompt: "Selecione a escolaridade", include_blank:false} , {:class=>'form-control', :id=>"escolaridades-select"}%></div>
+								<div class="col-sm-6"><%= f.collection_select :escolaridade_id, Escolaridade.escolaridades, :id, :nome, {prompt: "Selecione a escolaridade", include_blank:false} , {:class=>'form-control', :id=>"escolaridades-select"}%></div>
 							</div>
 							<div class="form-group">
 								<%= f.label :curso_id, "Curso/Série", :class=>'control-label col-sm-4 col-sm-offset-1' %>
-								<div class="col-sm-6"><%= f.collection_select :curso_id, @estudante.escolaridade ? @estudante.escolaridade.cursos : [], :id, :nome, {prompt: "Selecione o Curso", include_blank:false}, {:class=>'form-control', id:"cursos-select"}%></div>
+								<div class="col-sm-6"><%= f.collection_select :curso_id, @estudante.escolaridade ? @estudante.escolaridade.cursos.order(:nome) : [], :id, :nome, {prompt: "Selecione o Curso", include_blank:false}, {:class=>'form-control', id:"cursos-select"}%></div>
 							</div>
 							<div class="form-group">
 								<%= f.label :matricula, "Matrícula", :class=>'control-label col-sm-4 col-sm-offset-1' %>
@@ -42,3 +45,8 @@
 		</div>
 	</div>
 <%end%>
+<script type="text/javascript">
+	$("#estudante_instituicao_ensino_nome").autocomplete({
+		source: $("#estudante_instituicao_ensino_nome").data("autocomplete-source")
+	});
+</script>
