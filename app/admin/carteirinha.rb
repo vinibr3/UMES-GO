@@ -178,7 +178,7 @@ ActiveAdmin.register Carteirinha do
       # Script para escolher 'curso' a partir de 'escolaridade'
     render inline: "<script type='text/javascript'> $('#escolaridades-select').change(function(){ 
       var escolaridade_id = $('#escolaridades-select').val();
-      var url = '/escolaridades/'.concat(escolaridade_id).concat('/cursos.js');
+      var url = '/escolaridades/'.concat(escolaridade_id).concat('/cursos.js').concat(?elemento_id=cidades-select);
       $.ajax({
           url: url,
           dataType: 'script'

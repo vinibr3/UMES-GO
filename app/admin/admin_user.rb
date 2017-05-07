@@ -135,7 +135,7 @@ ActiveAdmin.register AdminUser do
     # Script para escolher 'cidade' a partir de 'uf'
     render inline: "<script type='text/javascript'> $('#uf-select').change(function(){ 
       var uf_id = $('#uf-select').val();
-      var url = '/estados/'.concat(uf_id).concat('/cidades.js');
+      var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat('?elemento_id=cidades-select');
       $.ajax({
           url: url,
           dataType: 'script'

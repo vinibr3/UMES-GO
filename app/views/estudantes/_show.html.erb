@@ -38,8 +38,9 @@
 					<table>
 						<tr><td colspan="2"><strong>Entidade:&nbsp;</strong><%=@estudante.entidade ? @estudante.entidade.nome : ''%> </td></tr>
 						<tr><td colspan="2"><strong>Instituição de Ensino:&nbsp;</strong><%=@estudante.instituicao_ensino.nome if @estudante.instituicao_ensino %> </td></tr>
-						<tr><td colspan="2"><strong>Curso/Série:&nbsp; </strong><%=@estudante.curso.nome if @estudante.curso %> </td></tr>
+						<tr><td><strong>Cidade&nbsp; </strong><%=@estudante.instituicao_ensino_cidade_nome%> </td><td><strong>UF&nbsp; </strong><%=@estudante.instituicao_ensino_uf_nome%> </td> </tr>
 						<tr><td><strong>Escolaridade:&nbsp; </strong><%=@estudante.escolaridade.nome if @estudante.escolaridade %> </td></tr>
+						<tr><td colspan="2"><strong>Curso/Série:&nbsp; </strong><%=@estudante.curso.nome if @estudante.curso %> </td></tr>
 						<tr><td><strong>Matrícula:&nbsp; </strong><%=@estudante.matricula %> </td></tr>
 					</table>
 				</div>

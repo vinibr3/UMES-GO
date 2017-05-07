@@ -72,7 +72,7 @@ $(document).ready ->
               @selected = @text == dados.uf
               return
             # Atualiza cidades-select
-            $.ajax '/estados/'+$("#estudante_uf option:selected").val()+'/cidades',
+            $.ajax '/estados/'+$("#estudante_uf option:selected").val()+'/cidades'.concat("?elemento_id=cidades-select"),
               type: 'GET'
               dataType: 'script'
               async: false
@@ -105,7 +105,6 @@ $(document).ready ->
         console.log("Cursos selecionados!")
 
 # Jquery FileUploadFile
-
   $('#dados_do_estudante').fileupload
     autoUpload: true
     dataType: "script"

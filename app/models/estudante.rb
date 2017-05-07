@@ -66,7 +66,6 @@ class Estudante < ActiveRecord::Base
 	validates_attachment_content_type :xerox_rg, :content_type=> FILES_CONTENT_TYPE
 	validates_attachment_content_type :xerox_cpf, :content_type=> FILES_CONTENT_TYPE
 	validates_acceptance_of :termos
-    
     validates_length_of :foto_file_name, :comprovante_matricula_file_name, :xerox_rg_file_name, :maximum => 50, :message => "Nome do arquivo deve ser menor que %{count} caracteres"
 
 	public
@@ -178,6 +177,13 @@ class Estudante < ActiveRecord::Base
 		atributos.keys.each do |key|
 			nao_preenchidos << atributos[key] if self[key].blank?
 		end
+		if self.instituicao_ensino
+			nao_preenchidos << "Instituição de Ensino" if self.instituicao_ensino.nome.blank?
+			if !self.instituicao_ensino.cidade
+				nao_preenchidos << "Cidade da Instituição de Ensino"
+				nao_preenchidos << "UF da Instituição de Ensino" if !self.instituicao_ensino.estado
+			end
+		end
 		nao_preenchidos
 	end
 
@@ -207,8 +213,7 @@ class Estudante < ActiveRecord::Base
 	end
 
 	def estado_nome
-		estado = self.cidade.estado if self.cidade
-		estado.nome if estado
+		self.cidade.estado_nome if self.cidade
 	end
 
 	def estado_id
@@ -217,8 +222,7 @@ class Estudante < ActiveRecord::Base
 	end
 
 	def estado_sigla
-		estado = self.cidade.estado if self.cidade
-		estado.sigla if estado
+		self.cidade.estado_sigla if self.cidade
 	end
 
 	def entidade_nome
@@ -229,19 +233,31 @@ class Estudante < ActiveRecord::Base
 		self.instituicao_ensino.nome if self.instituicao_ensino
 	end
 
-	def instituicao_ensino_nome=(nome)
-		nome = nome.mb_chars.upcase
-		instituicao = InstituicaoEnsino.find_by_nome(nome)
-		if instituicao
-			self.instituicao_ensino = instituicao
-		else
-			instituicao = InstituicaoEnsino.new(nome: nome)
-			if instituicao.valid?
-				instituicao.save
-				instituicao = InstituicaoEnsino.find_by_nome(nome)
-				self.instituicao_ensino = instituicao
-			end
-		end
+	def instituicao_ensino_uf_nome
+		self.instituicao_ensino.estado_nome if self.instituicao_ensino
+	end
+
+	# nao remover
+	def instituicao_ensino_cidade_id=id  
+	end
+	# nao remover
+	def instituicao_ensino_nome=nome
+	end
+
+	def instituicao_ensino_uf_id
+		self.instituicao_ensino.estado_id if self.instituicao_ensino
+	end
+
+	def instituicao_ensino_cidade_nome
+		self.instituicao_ensino.cidade_nome if self.instituicao_ensino
+	end
+
+	def instituicao_ensino_cidade_id 
+		self.instituicao_ensino.cidade_id if self.instituicao_ensino
+	end
+
+	def instituicao_ensino_estado
+		self.instituicao_ensino.estado if self.instituicao_ensino
 	end
 
 	protected

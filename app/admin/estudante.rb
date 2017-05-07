@@ -11,7 +11,9 @@ ActiveAdmin.register Estudante do
                 :celular, :numero, :expedidor_rg, :uf_expedidor_rg,
                 :cidade_inst_ensino, :uf_inst_ensino, :xerox_cpf, 
                 :instituicao_ensino_id, :curso_id, :cidade_id, 
-                :entidade_id, :admin_user_id, :instituicao_ensino_nome
+                :entidade_id, :admin_user_id, :instituicao_ensino_nome,
+                :instituicao_ensino_cidade_id 
+
 
   filter :email
   filter :nome
@@ -80,6 +82,12 @@ ActiveAdmin.register Estudante do
         end
         row "Instituição Ensino" do 
           estudante.instituicao_ensino_nome
+        end
+        row "UF" do 
+          estudante.instituicao_ensino.estado_sigla if estudante.instituicao_ensino
+        end
+        row "Cidade" do 
+          estudante.instituicao_ensino.cidade_nome if estudante.instituicao_ensino
         end
         row "Escolaridade" do 
           estudante.escolaridade_nome
@@ -170,7 +178,10 @@ ActiveAdmin.register Estudante do
     f.inputs "Dados Estudantis" do
       f.input :entidade, collection: Entidade.order(:nome).map{|e| [e.nome, e.id]}, prompt:"Selecione a Entidade", 
               label: "Entidade", include_blank: false
-      f.input :instituicao_ensino_nome, :input_html=>{:id=>"instituicao-ensino-autocomplete-admin"}, label: "Instituição de ensino"
+      f.input :instituicao_ensino_nome, :input_html=>{:id=>"instituicao-ensino-autocomplete-admin"}, label: "Instituição de Ensino"
+      f.input :instituicao_ensino_uf_id, :input_html=>{:id=>"instituicao-ensino-uf-select"}, collection: Estado.order(:nome).map{|e| [e.nome, e.id]}, label:"UF", include_blank: false, prompt: "Selecione UF"
+      f.input :instituicao_ensino_cidade_id, :input_html=>{:id=>"instituicao-ensino-cidade-select"}, 
+              collection: Cidade.order(:nome).where(estado_id: f.object.instituicao_ensino_uf_id).map{|e| [e.nome, e.id]}, label:"Cidade", include_blank: false, prompt: "Selecione Cidade"  
       f.input :escolaridade_id, :as => :select, prompt: "Selecione a Escolaridade", :input_html=>{:id=>"escolaridades-select"},
               collection: Escolaridade.escolaridades.map{|e| [e.nome, e.id]}, label: "Escolaridade"
       f.input :curso, :as => :select, prompt: "Selecione o Curso", :input_html=>{id: "cursos-select"}, 
@@ -203,25 +214,75 @@ ActiveAdmin.register Estudante do
           dataType: 'script'
         });
       });</script>"
-    # Script para escolher 'cidade' a partir de 'uf'
+    # Script para escolher 'cidade' a partir de 'uf', da instiuição de ensino do estudante
+    render inline: "<script type='text/javascript'> $('#instituicao-ensino-uf-select').change(function(){ 
+      var uf_id = $('#instituicao-ensino-uf-select').val();
+      var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat('?elemento_id=instituicao-ensino-cidade-select');
+      $.ajax({
+          url: url,
+          dataType: 'script'
+        });
+      });</script>"  
+    # Script para escolher 'cidade' a partir de 'uf', do endereço
     render inline: "<script type='text/javascript'> $('#uf-select').change(function(){ 
       var uf_id = $('#uf-select').val();
-      var url = '/estados/'.concat(uf_id).concat('/cidades.js');
+      var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat('?elemento_id=cidades-select');
       $.ajax({
           url: url,
           dataType: 'script'
         });
       });</script>"
       # configura autocomplete para Instituicao de Ensino
-      render inline: "<script type='text/javascript'>
-    $('#instituicao-ensino-autocomplete-admin').autocomplete({source: '/admin/instituicao_ensinos/autocomplete'});</script>"
+    render inline: "<script type='text/javascript'>
+    $('#instituicao-ensino-autocomplete-admin').autocomplete({
+      source: '/admin/instituicao_ensinos/autocomplete',
+      select: function( event, ui ) {
+          $('#instituicao-ensino-uf-select').val(null);
+          $('#instituicao-ensino-cidade-select').html(null);
+          if(ui.item.uf_id != null && ui.item.uf_id){
+            $('#instituicao-ensino-uf-select').val(ui.item.uf_id);
+            var uf_id = $('#instituicao-ensino-uf-select').val();
+            var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat('?elemento_id=instituicao-ensino-cidade-select');
+            $.ajax({
+              url: url,
+                dataType: 'script',
+                success: function(data){
+                  $('#instituicao-ensino-cidade-select').val(ui.item.cidade_id);   
+              }
+            });
+          }
+      }
+    });</script>"
   end
 
   before_create do |estudante|
+    # Cria instituição de ensino para estudante, se não existe
+    estudante_params = permitted_params[:estudante] 
+    nome = estudante_params[:instituicao_ensino_nome]
+    cidade_id = estudante_params[:instituicao_ensino_cidade_id]
+    instituicao = InstituicaoEnsino.where(nome: nome, cidade_id: cidade_id).first_or_create do |i|
+      i.nome = nome
+      i.cidade_id = cidade_id
+    end
+    estudante.instituicao_ensino = instituicao if instituicao.valid?
+    
+    # Configura dados para o estudante
     estudante.admin_user = current_admin_user
     estudante.password = Devise.friendly_token
     estudante.skip_confirmation!
     estudante.skip_confirmation_notification!
+  end
+
+  before_update do |estudante|
+    # Cria instituição de ensino para estudante, se não existe
+    estudante_params = permitted_params[:estudante] 
+    nome = estudante_params[:instituicao_ensino_nome]
+    cidade_id = estudante_params[:instituicao_ensino_cidade_id]
+    instituicao = InstituicaoEnsino.where(nome: nome, cidade_id: cidade_id).first_or_create do |i|
+      i.nome = nome
+      i.cidade_id = cidade_id
+    end
+    estudante.instituicao_ensino = instituicao if instituicao.valid?
   end
 
   after_create do |estudante|

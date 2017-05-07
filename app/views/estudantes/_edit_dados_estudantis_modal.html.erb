@@ -21,7 +21,18 @@
 								<%= f.text_field :instituicao_ensino_nome, data: {autocomplete_source: instituicao_ensinos_path}, :class=>"form-control" %>
 								</div>
 							</div>
-							
+							<div class="form-group">
+								<%= f.label :instituicao_ensino_uf_nome, "UF", :class=>'control-label col-sm-4 col-sm-offset-1' %>
+								<div class="col-sm-6">
+								<%= f.collection_select :instituicao_ensino_uf_id, Estado.order(:nome), :id, :nome, {prompt: "Selecione UF"}, {:class=>'form-control', id:"instituicao-ensino-uf-select"} %>
+								</div>
+							</div>
+							<div class="form-group">
+								<%= f.label :instituicao_ensino_cidade_id, "Cidade", :class=>'control-label col-sm-4 col-sm-offset-1' %>
+								<div class="col-sm-6">
+								<%= f.collection_select :instituicao_ensino_cidade_id, Cidade.where(estado: f.object.instituicao_ensino_estado), :id, :nome, {prompt: "Selecione Cidade", include_blank: false}, {:class=>'form-control', id:'instituicao-ensino-cidade-select'}%>
+								</div>
+							</div>
 							<div class="form-group">
 								<%= f.label :escolaridade, :class=>'control-label col-sm-4 col-sm-offset-1' %>
 								<div class="col-sm-6"><%= f.collection_select :escolaridade_id, Escolaridade.escolaridades, :id, :nome, {prompt: "Selecione a escolaridade", include_blank:false} , {:class=>'form-control', :id=>"escolaridades-select"}%></div>
@@ -46,7 +57,39 @@
 	</div>
 <%end%>
 <script type="text/javascript">
+	// Busca instituição de ensino autocompletando e preenche respectivos cidade e estado 
 	$("#estudante_instituicao_ensino_nome").autocomplete({
-		source: $("#estudante_instituicao_ensino_nome").data("autocomplete-source")
+		source: $("#estudante_instituicao_ensino_nome").data("autocomplete-source"),
+		select: function( event, ui ) {
+			$("#instituicao-ensino-uf-select").val(null);
+			$("#instituicao-ensino-cidade-select").html(null);
+
+			if(ui.item.uf_id != null && ui.item.uf_id){
+				$("#instituicao-ensino-uf-select").val(ui.item.uf_id);
+				var uf_id = $('#instituicao-ensino-uf-select').val();
+		     	var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat("?elemento_id=instituicao-ensino-cidade-select");
+		      		$.ajax({
+		         		url: url,
+		          		dataType: 'script',
+		          		success: function(data){
+		          			$("#instituicao-ensino-cidade-select").val(ui.item.cidade_id);
+		          			
+		          	}
+		        });
+			}	
+		}
 	});
+</script>
+<script type='text/javascript'> 
+	// Preenche check box de cidades a partir de um estado 
+	$('#instituicao-ensino-uf-select').change(function(){ 
+      	var uf_id = $('#instituicao-ensino-uf-select').val();
+      	if(uf_id != null && uf_id != undefined){
+      		var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat("?elemento_id=instituicao-ensino-cidade-select");
+      		$.ajax({
+          		url: url,
+          		dataType: 'script'
+        	});
+      	}
+    });
 </script>

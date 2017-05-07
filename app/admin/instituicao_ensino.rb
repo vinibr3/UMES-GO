@@ -64,7 +64,7 @@ ActiveAdmin.register InstituicaoEnsino do
     render inline: "<script type='text/javascript'> 
     $('#uf-select').change(function(){ 
       var uf_id = $('#uf-select').val();
-      var url = '/estados/'.concat(uf_id).concat('/cidades.js');
+      var url = '/estados/'.concat(uf_id).concat('/cidades.js').concat('?elemento_id=cidades-select');
       $.ajax({
           url: url,
           dataType: 'script'
@@ -73,9 +73,11 @@ ActiveAdmin.register InstituicaoEnsino do
 	end
 
 	collection_action :autocomplete, method: :get do 
-		param = I18n.transliterate(params[:term].mb_chars.upcase)
-		instituicoes = InstituicaoEnsino.order(:nome).where("unaccent(upper(nome)) ILIKE ?", "%#{param}%").limit(10)
-		render json: instituicoes.map(&:nome), root: false if :authenticate_admin_user!
+		if authenticate_admin_user!
+			param = I18n.transliterate(params[:term].mb_chars.upcase)
+			instituicoes = InstituicaoEnsino.order(:nome).where("unaccent(upper(nome)) ILIKE ?", "%#{param}%").limit(50)
+			render json: instituicoes.map{|i| {id: i.id, value: i.nome, label: i.nome_autocomplete, uf_id: i.estado_id, cidade_id: i.cidade_id}}, root: false
+		end
 	end
 
 end

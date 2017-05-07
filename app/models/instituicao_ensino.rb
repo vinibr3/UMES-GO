@@ -1,9 +1,9 @@
 class InstituicaoEnsino < ActiveRecord::Base
   
   belongs_to :cidade
-  belongs_to :estado
   has_many :estudantes
   has_many :cursos
+  has_one :estado, through: :cidade
 
   STRING_REGEX = /\A[a-z A-Z]+\z/
   LETRAS = /[A-Z a-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+/ #/[[:alpha:]]/ #/[A-Z a-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+/ 
@@ -28,7 +28,7 @@ class InstituicaoEnsino < ActiveRecord::Base
   end
 
   def self.escolaridades
-    cursos.escolaridades
+    self.cursos.escolaridades
   end
 
   def entidade_nome
@@ -43,13 +43,30 @@ class InstituicaoEnsino < ActiveRecord::Base
     self.cidade.nome if self.cidade
   end
 
+  def cidade_id
+    self.cidade.id if self.cidade
+  end
+
   def estado_sigla 
     self.estado.sigla if self.estado
   end
 
+  def estado_nome
+    self.estado.nome if self.estado
+  end
+
   def estado_id
-    self.estado.id if estado
+    self.estado.id if self.estado
+  end
+
+  def nome_autocomplete 
+    nome = self.nome
+    cidade = self.cidade
+    if cidade
+      nome  = "#{nome}, #{self.cidade.nome.mb_chars.upcase}"
+      nome = "#{nome} - #{cidade.estado.sigla.upcase}" if cidade.estado
+    end
+    nome
   end
 
 end
-
