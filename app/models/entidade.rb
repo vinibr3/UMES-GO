@@ -9,6 +9,7 @@ class Entidade < ActiveRecord::Base
 	has_many :carteirinhas, through: :estudantes
 	has_many :layout_carteirinhas
 	has_many :instituicao_ensinos
+	has_many :extensoes
 
 	FILES_NAME_PERMIT = [/png\Z/, /jpe?g\Z/]
 	FILES_CONTENT_TYPE = ['image/jpeg', 'image/png']
@@ -34,10 +35,10 @@ class Entidade < ActiveRecord::Base
 	validates :cep, length:{is: 8, wrong_length: "#{count} caracteres."}, numericality: true, allow_blank: true
 	validates :cidade, length: {maximum: 50, too_long: "Máximo de #{count} caracteres permitidos."}, allow_blank: true
 	validates :uf, length: {is: 2, wrong_length: "Máximo de 2 caracteres permitidos."}, format: {with: STRING_REGEX}, allow_blank: true
-	validates :url_qr_code, length: {maximum: 70, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp} ,allow_blank: false
-	validates :auth_info_access, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
-	validates :crl_dist_points, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
-	validates :dominio, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
+	validates :url_qr_code, length: {maximum: 300, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp} ,allow_blank: false
+	#validates :auth_info_access, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
+	#validates :crl_dist_points, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
+	validates :dominio, length:{maximum: 300, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
 	validates_attachment_size :logo, :less_than => 1.megabytes
 	validates_attachment_file_name :logo, :matches => FILES_NAME_PERMIT
 	validates_attachment_content_type :logo, :content_type => FILES_CONTENT_TYPE
@@ -61,12 +62,12 @@ class Entidade < ActiveRecord::Base
 	validates :cidade_presidente, length: {maximum: 50, too_long: "Máximo de #{count} caracteres permitidos."}, allow_blank: true
 	validates :uf_presidente, length: {is: 2, wrong_length: "Máximo de 2 caracteres permitidos."}, format: {with: STRING_REGEX}, allow_blank: true
 
-	validates_presence_of :nome, :sigla, :email, :valor_carteirinha, :auth_info_access, :crl_dist_points, :dominio, :url_qr_code 
+	validates_presence_of :nome, :sigla, :email, :valor_carteirinha, :dominio, :url_qr_code 
 
 	before_create :config_data_from_dominio
 
 	def self.instance
-		entidade = Entidade.last
+		entidade = Entidade.first
 		if entidade 
 		   return entidade
 		else
@@ -78,8 +79,50 @@ class Entidade < ActiveRecord::Base
 		first
 	end
 
+	def self.cadeia_certificados_raiz_url id
+		entidade = Entidade.find(id)
+		if entidade 
+			return entidade.cadeia_certificados_raiz_url
+		else
+			return self.entidade_padrao.cadeia_certificados_raiz_url if self.entidade_padrao
+		end
+	end
+
+	def self.lista_certificados_revogados_url id
+		entidade = Entidade.find(id)
+		if entidade && entidade.has_cadeia_certificados_raiz?
+			return entidade.lista_certificados_revogados_url
+		else
+			return self.entidade_padrao.lista_certificados_revogados_url if self.entidade_padrao
+		end	
+	end
+
 	def layout_anverso
 		self.layout_carteirinhas.first.anverso if self.layout_carteirinhas.first
+	end
+
+	def cadeia_certificados_raiz_url
+		extensao = self.extensoes.last
+		if extensao
+			path = "#{build_url}/#{extensao.url_for_aia}"
+			return "#{self.dominio}/#{path}"
+		else
+			nil
+		end
+	end
+
+	def lista_certificados_revogados_url
+		extensao = self.extensoes.last
+		if extensao
+			path = "#{build_url}/#{extensao.url_for_crl}"
+			return "#{self.dominio}/#{path}"
+		else
+			nil
+		end
+	end
+
+	def has_cadeia_certificados_raiz?
+		self.extensoes.last
 	end
 
 	private 
@@ -88,4 +131,7 @@ class Entidade < ActiveRecord::Base
 			self.token_certificado = Devise.friendly_token unless self.token_certificado 
 		end
 
+		def build_url
+			"entidades/#{self.id}"
+		end
 end

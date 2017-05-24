@@ -9,7 +9,7 @@ Rails.application.routes.draw do
 
  
   get 'pages/home',           to:"pages#index",          as: :home
-  get 'pages/sobre',           to:"pages#sobre",         as: :sobre
+  get 'pages/sobre',          to:"pages#sobre",          as: :sobre
   get 'pages/meia_entrada',   to:"pages#meia_entrada",   as: :meia_entrada
   get 'pages/consulta',       to:"pages#consulta",       as: :consulta
   get 'pages/contato',        to:"pages#contato",        as: :contato
@@ -60,6 +60,11 @@ Rails.application.routes.draw do
   get 'certificados/:chave_acesso', to:"certificados#show" # Não alterar
 
   resources :eventos, only: [:show]
+
+  # Rota para obter a Lista de Certificados Revogados (CRL)
+  get 'entidades/:entidade_id/extensoes/crl/:id', to: 'extensoes#crl'
+  # Rota pra obter a Cadeia de Certififcados Raiz (Authority Information Access) 
+  get 'entidades/:entidade_id/extensoes/aia/:id', to: 'extensoes#aia'
 
   # Rotas da API 
   namespace :api, defaults:{format: :json} do

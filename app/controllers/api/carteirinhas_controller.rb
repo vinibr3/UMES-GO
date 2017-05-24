@@ -4,23 +4,30 @@ class Api::CarteirinhasController < Api::AuthenticateBase
 	before_action :http_token_authentication, only: [:show, :create]
 
 	def index
-		status = Carteirinha.status_versao_impressas[2]
-		@carteirinhas = Carteirinha.where("status_versao_impressa = ? AND certificado IS NULL", status)
+		status = Carteirinha.class_variable_get(:@@status_versao_impressas)[:aprovada]
+		@carteirinhas = Carteirinha.where("status_versao_impressa = ? AND certificado = ''", status)
 		if @carteirinhas.empty?
 			render_erro "Nenhuma Carteira de Identificação Estudantil com status #{status} encontrada.", 404
 		else
-			entidade = Entidade.instance
-			if entidade.nil?
-				render_erro "Nenhuma entidade encontrada.", 404
-			else
-				if entidade.auth_info_access.blank? || entidade.crl_dist_points.blank?
-					render_erro "'Autoridade de Acesso à Informação' e/ou 'CRL Ponto de Distribuição' não estão preenchidos.", 500 
-				else
-					json = {:entidade => {:auth_info_access => entidade.auth_info_access, 
-										  :crl_dist_points => entidade.crl_dist_points, 
+			entidade = Entidade.entidade_padrao
+			if entidade
+				extensao = entidade.extensoes.first
+				if extensao
+					auth_info_url = Entidade.cadeia_certificados_raiz_url(entidade.id)
+					crl_url = Entidade.lista_certificados_revogados_url(entidade.id)
+					if auth_info_url && crl_url
+						json = {:entidade => {:auth_info_access => auth_info_url, 
+										  :crl_dist_points => crl_url, 
 					        			  :carteirinhas => @carteirinhas.map{|c| CarteirinhaSerializer.new(c)}}}
-					respond_with json
+						respond_with json
+					else
+						render_erro "'Autoridade de Acesso à Informação' e/ou 'CRL Ponto de Distribuição' não estão preenchidos.", 500 
+					end
+				else
+					render_erro "Entidade não possui nenhuma Extensão cadastrada.", 500
 				end
+			else
+				render_erro "Nenhuma entidade encontrada.", 404
 			end
 		end
 	end

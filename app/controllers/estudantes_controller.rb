@@ -9,7 +9,7 @@ class EstudantesController < ApplicationController
 	end	
 
 	def update
-		@atribute_updated = estudante_params.map{|k,v| k}.first if request.format.js?
+		@atribute_updated = estudante_params.map{|k,v| k}.first if request.format.js? # responde ao jquery fileupload
 		respond_to do |format|
 			parametros = estudante_params
 			nome_instituicao = parametros[:instituicao_ensino_nome]
@@ -24,9 +24,11 @@ class EstudantesController < ApplicationController
 
 			if current_estudante.update(parametros)
 				format.html{ redirect_to current_estudante, notice: "Dados salvos com sucesso!" }
+				format.js
 			else
 				@estudante_errors = current_estudante.errors.full_messages.to_s
 				format.html{redirect_to current_estudante, alert: @estudante_errors }
+				format.js
 			end
 		end
 	end

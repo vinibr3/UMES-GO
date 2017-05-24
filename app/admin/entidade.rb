@@ -11,8 +11,7 @@ ActiveAdmin.register Entidade do
 	              :sexo_presidente, :celular_presidente, :telefone_presidente,
 	              :logradouro_presidente, :numero_presidente, :complemento_presidente,
 	              :cep_presidente, :cidade_presidente, :uf_presidente, 
-	              :usuario, :url_qr_code, :token_certificado, 
-	              :auth_info_access, :crl_dist_points, :dominio
+	              :usuario, :url_qr_code, :token_certificado, :dominio
 
 	filter :nome
 	filter :sigla
@@ -44,8 +43,8 @@ ActiveAdmin.register Entidade do
 				row :token_certificado, "Senha"
 				row :dominio, "Domínio"
 				row :url_qr_code, "URl QR-Code"
-				row :auth_info_access, "Autoridade de Acesso à Informação (URL)"
-				row :crl_dist_points, "CRL Ponto de Distribuição (URL)"
+				row :cadeia_certificados_raiz_url, "Cadeia de Certificados Raiz (URL)"
+				row :lista_certificados_revogados_url, "CRL Ponto de Distribuição (URL)"
 			end
 		end
 		panel "Endereço da Entidade" do 
@@ -97,8 +96,6 @@ ActiveAdmin.register Entidade do
 			f.input :token_certificado, label: "Senha"
 			f.input :dominio, label: "Domínio"
 			f.input :url_qr_code, label: "URL Qr-Code", :hint=>"Domínio da entidade + '/certificados/'"
-			f.input :auth_info_access, label: "Autoridade de Acesso à Informação (URL)"
-			f.input :crl_dist_points, label: "CRL Ponto de Distribuição (URL)"
 		end
 		f.inputs "Endereço da Entidade" do 
 			f.input :logradouro
@@ -132,4 +129,11 @@ ActiveAdmin.register Entidade do
 		f.actions
 	end
 
+	
+	sidebar "Certificado de Atributo", only: [:show, :new] do
+		ul do
+		    li link_to "Extensões", admin_entidade_extensoes_path(resource)
+		end
+	end
+	
 end

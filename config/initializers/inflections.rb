@@ -17,4 +17,8 @@ ActiveSupport::Inflector.inflections(:en) do |inflect|
   inflect.singular('noticias','noticia')
   inflect.plural('configuracao','configuracoes')
   inflect.singular('configuracoes','configuracao')
+  inflect.plural('extensao','extensoes')
+  inflect.singular('extensoes','extensao')
+  inflect.plural('raiz','raizes')
+  inflect.singular('raizes','raiz')
 end

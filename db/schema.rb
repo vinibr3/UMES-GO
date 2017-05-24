@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170504173753) do
+ActiveRecord::Schema.define(version: 20170524170003) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -207,8 +207,6 @@ ActiveRecord::Schema.define(version: 20170504173753) do
     t.string   "logo_content_type"
     t.integer  "logo_file_size"
     t.datetime "logo_updated_at"
-    t.string   "auth_info_access"
-    t.string   "crl_dist_points"
   end
 
   create_table "escolaridades", force: :cascade do |t|
@@ -305,6 +303,22 @@ ActiveRecord::Schema.define(version: 20170504173753) do
     t.datetime "updated_at",          null: false
   end
 
+  create_table "extensoes", force: :cascade do |t|
+    t.integer  "entidade_id"
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.string   "lista_certificados_revogados_file_name"
+    t.string   "lista_certificados_revogados_content_type"
+    t.integer  "lista_certificados_revogados_file_size"
+    t.datetime "lista_certificados_revogados_updated_at"
+    t.string   "cadeia_certificados_raiz_file_name"
+    t.string   "cadeia_certificados_raiz_content_type"
+    t.integer  "cadeia_certificados_raiz_file_size"
+    t.datetime "cadeia_certificados_raiz_updated_at"
+  end
+
+  add_index "extensoes", ["entidade_id"], name: "index_extensoes_on_entidade_id", using: :btree
+
   create_table "instituicao_ensinos", force: :cascade do |t|
     t.string   "nome"
     t.string   "sigla"
@@ -393,6 +407,7 @@ ActiveRecord::Schema.define(version: 20170504173753) do
   add_foreign_key "estudantes", "admin_users"
   add_foreign_key "estudantes", "cidades"
   add_foreign_key "estudantes", "entidades"
+  add_foreign_key "extensoes", "entidades"
   add_foreign_key "instituicao_ensinos", "cidades"
   add_foreign_key "instituicao_ensinos", "estados"
   add_foreign_key "layout_carteirinhas", "entidades"
