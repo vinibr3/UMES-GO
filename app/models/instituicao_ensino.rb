@@ -59,6 +59,10 @@ class InstituicaoEnsino < ActiveRecord::Base
     self.estado.id if self.estado
   end
 
+  def cidade_estado
+    "#{self.cidade_nome} - #{self.estado_nome}" if self.cidade
+  end
+
   def nome_autocomplete 
     nome = self.nome
     cidade = self.cidade

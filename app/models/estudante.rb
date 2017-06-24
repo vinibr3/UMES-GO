@@ -1,4 +1,6 @@
 class Estudante < ActiveRecord::Base
+  attr_accessor :foto_content, :foto_url, :xerox_cpf_url, :xerox_cpf_content, 
+  				:xerox_rg_url, :xerox_rg_content, :comprovante_matricula_url, :comprovante_matricula_content
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable, :confirmable,
@@ -266,9 +268,10 @@ class Estudante < ActiveRecord::Base
 	 		endereco['logradouro'] = self[:logradouro]
 	 		endereco['numero'] = self[:numero].to_i
 	 		endereco['complemento'] = self[:complemento]
-	 		endereco['cidade'] = self[:cidade]
+	 		endereco['estado'] = self.estado.sigla if self.estado
+	 		endereco['cidade_id'] = self.cidade.id.to_s if self.cidade
 	 		endereco['cep'] = self[:cep].to_i
-	 		endereco['uf'] = self[:cidade].estado.nome if self[:cidade] && self[:cidade].estado
+	 		endereco['setor'] = self[:setor]
 	 		endereco
 	 	end
 
