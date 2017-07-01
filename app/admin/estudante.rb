@@ -292,7 +292,7 @@ ActiveAdmin.register Estudante do
   # Actions
   
   # Action item que cria a carteirinha para o aluno
-  action_item :new_carteirinha, only: :show do
+  action_item :new_carteirinha, only: :show, if: proc{current_admin_user.entidade} do
     # Faz a requisição no controller 'admin/carteirinha' via 'post' para criar a carteirinha 
     link_to "Criar Carteirinha", "/admin/carteirinhas?estudante_id=#{resource.id}", method: :post
   end 

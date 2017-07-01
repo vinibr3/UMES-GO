@@ -88,7 +88,7 @@ class Carteirinha < ActiveRecord::Base
 	end
 
 	def valid
-		dias_validade >= 0
+		dias_validade >= 0 && self.status_versao_impressa_to_i >= 2 && self.status_versao_impressa_to_i <= 4
 	end
 
 	def em_solicitacao?

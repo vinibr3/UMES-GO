@@ -10,6 +10,7 @@ class Entidade < ActiveRecord::Base
 	has_many :layout_carteirinhas
 	has_many :instituicao_ensinos
 	has_many :extensoes
+	has_many :admin_users
 
 	FILES_NAME_PERMIT = [/png\Z/, /jpe?g\Z/]
 	FILES_CONTENT_TYPE = ['image/jpeg', 'image/png']
@@ -36,8 +37,7 @@ class Entidade < ActiveRecord::Base
 	validates :cidade, length: {maximum: 50, too_long: "Máximo de #{count} caracteres permitidos."}, allow_blank: true
 	validates :uf, length: {is: 2, wrong_length: "Máximo de 2 caracteres permitidos."}, format: {with: STRING_REGEX}, allow_blank: true
 	validates :url_qr_code, length: {maximum: 300, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp} ,allow_blank: false
-	#validates :auth_info_access, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
-	#validates :crl_dist_points, length:{maximum: 100, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
+	validates :valor_certificado, numericality: true, allow_blank: false 
 	validates :dominio, length:{maximum: 300, too_long: "Máximo de #{count} caracteres permitidos."}, format:{with: URI.regexp}, allow_blank: false
 	validates_attachment_size :logo, :less_than => 1.megabytes
 	validates_attachment_file_name :logo, :matches => FILES_NAME_PERMIT
@@ -62,9 +62,9 @@ class Entidade < ActiveRecord::Base
 	validates :cidade_presidente, length: {maximum: 50, too_long: "Máximo de #{count} caracteres permitidos."}, allow_blank: true
 	validates :uf_presidente, length: {is: 2, wrong_length: "Máximo de 2 caracteres permitidos."}, format: {with: STRING_REGEX}, allow_blank: true
 
-	validates_presence_of :nome, :sigla, :email, :valor_carteirinha, :dominio, :url_qr_code 
+	validates_presence_of :nome, :sigla, :email, :valor_carteirinha, :dominio, :url_qr_code, :valor_certificado 
 
-	before_create :config_data_from_dominio
+	before_create :config_data_from_dominio, :set_default_valor_certificado
 
 	def self.instance
 		entidade = Entidade.first
@@ -123,6 +123,10 @@ class Entidade < ActiveRecord::Base
 
 	def has_cadeia_certificados_raiz?
 		self.extensoes.last
+	end
+
+	def set_default_valor_certificado
+		self.valor_certificado = 0 if self.valor_certificado.blank?
 	end
 
 	private 

@@ -107,10 +107,11 @@ class Estudante < ActiveRecord::Base
 
 	def last_valid_carteirinha
 	 	cart = self.carteirinhas.last
-	 	if !cart.nil?
-	 		cart.valid ? cart : nil
+	 	if cart && cart.valid 
+	 		return cart
+	 	else
+	 		return nil
 	 	end
-	 	cart 
 	end
 
 	def self.koala(access_token)

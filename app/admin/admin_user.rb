@@ -10,7 +10,7 @@ ActiveAdmin.register AdminUser do
                 :data_nascimento, :sexo, :celular, :telefone, :logradouro,
                 :numero, :complemento, :setor, :cep, :cidade, :uf, :usuario,
                 :super_admin, :status, :password, :password_confirmation,
-                :cidade_id
+                :cidade_id, :entidade_id, :entidade, :valor_certificado, :saldo
 
   filter :nome
   filter :usuario
@@ -22,6 +22,9 @@ ActiveAdmin.register AdminUser do
     column :nome
     column "Usuário", :usuario
     column :email
+    column "Saldo (R$)" do |admin_user|
+      admin_user.saldo
+    end
     column "Status" do |admin_user|
       status_tag(admin_user.status, admin_user.ativo? ? :ok : :warning)
     end
@@ -37,6 +40,15 @@ ActiveAdmin.register AdminUser do
                 row :nome
                 row :usuario
                 row :email
+                row "Saldo (R$)" do |admin_user|
+                  admin_user.saldo
+                end
+                row "Entidade" do |admin_user|
+                  admin_user.entidade_nome
+                end
+                row "Valor Certificado (R$)" do |admin_user|
+                  admin_user.valor_certificado
+                end
                 row :password
                 row :super_admin
                 row :status
@@ -103,9 +115,14 @@ ActiveAdmin.register AdminUser do
       f.input :nome
       f.input :usuario
       f.input :email
+      if !current_admin_user.entidade #usuario de administração
+        f.input :saldo, label: "Saldo (R$)" 
+        f.input :entidade_id, label: "Entidade",as: :select, collection: Entidade.order(:nome).map{|e| [e.nome, e.id]}, prompt: "Selecione"
+        f.input :valor_certificado, label: "Valor Certificado (R$)"   
+      end
       f.input :password
       f.input :password_confirmation
-      f.input :super_admin, as: :radio
+      f.input :super_admin, as: :radio if current_admin_user.entidade
       f.input :status, as: :radio
     end
     f.inputs "Dados Pessoais" do
@@ -141,6 +158,15 @@ ActiveAdmin.register AdminUser do
           dataType: 'script'
         });
       });</script>"
+  end
+
+  before_create do |admin_user| 
+    if current_admin_user.entidade
+      admin_user.valor_certificado = current_admin_user.entidade.valor_certificado
+      admin_user.entidade = current_admin_user.entidade
+    else
+      admin_user.valor_certificado = 0
+    end
   end
 
 end

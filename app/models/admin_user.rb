@@ -8,6 +8,8 @@ class AdminUser < ActiveRecord::Base
   has_one :estado, through: :cidade
   has_many :carteirinhas
   has_many :estudantes
+  belongs_to :entidade
+  has_many :certificado_pedidos
 
   # expressões regulares
   EMAIL_REGEX = /\A([^@\s]+)@((?:[-a-z0-9]+\.)+[a-z]{2,})\z/i
@@ -26,7 +28,7 @@ class AdminUser < ActiveRecord::Base
   validates :expedidor_rg, length:{maximum: 10, too_long:"Máximo de 10 caracteres permitidos!"}, 
                format:{with:STRING_REGEX, message: "Somente letras é permitido!"}, allow_blank: true
   validates :uf_expedidor_rg, length:{is: 2}, format:{with:STRING_REGEX}, allow_blank: true
-  #validates :uf, length:{is: 2}, format:{with:STRING_REGEX}, allow_blank: true
+  validates :saldo, numericality:true, allow_blank: true
   validates :telefone, length:{in: 10..11}, numericality: true, allow_blank: true
   validates :logradouro, length:{maximum: 50}, allow_blank: true
   validates :complemento, length:{maximum: 50}, allow_blank: true
@@ -38,12 +40,17 @@ class AdminUser < ActiveRecord::Base
   validates :rg, numericality: true, allow_blank: true
   validates :cpf, numericality: true, length:{is: 11, too_long: "Necessário 11 caracteres.",  too_short: "Necessário 11 caracteres."}, allow_blank: true
   validates :setor, length: { maximum: 30, too_long: "Máximo de 30 caracteres permitidos!"}, allow_blank: true
+  validates :valor_certificado, numericality: true, allow_blank: false, presence: true
 
   validates :password, :password_confirmation, presence: true, on: :create
   validates :password, confirmation: true
 
-  before_create :reset_password 
+  before_create :reset_password
   before_update :reset_password
+
+  def entidade_nome
+    self.entidade.nome if self.entidade
+  end
 
   def cidade_nome
     self.cidade.nome if self.cidade
@@ -52,6 +59,16 @@ class AdminUser < ActiveRecord::Base
   def uf_nome
     estado = self.cidade.estado if self.cidade
     nome_estado = estado.sigla if estado
+  end
+
+  def nome_pagamento
+    prefix = ''
+    if(self.entidade && self.entidade.sigla)
+      prefix = "#{self.entidade.sigla}"
+    else
+      prefix = "#{self.entidade.nome}"
+    end
+    "#{prefix}: #{self.nome}"
   end
 
   def uf
@@ -64,6 +81,20 @@ class AdminUser < ActiveRecord::Base
 
   def reset_password
     self.password = Devise.friendly_token if self.inativo?
+  end
+
+  def saldo_carteiras
+    (self.saldo/self.valor_certificado).to_i
+  end
+
+  def show_no_menu?
+    if self.valor_certificado && self.valor_certificado > 0
+      return true
+    end
+    if !self.entidade || self.sim? 
+      return true
+    end
+    return false
   end
 
   private    

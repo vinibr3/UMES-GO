@@ -1,0 +1,19 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  valor_unitario: 1
+  quantidade: 1
+  valor_total: 1
+  admin_user_id: 
+  status: MyString
+  transacao: MyString
+  forma_pagamento: MyString
+
+two:
+  valor_unitario: 1
+  quantidade: 1
+  valor_total: 1
+  admin_user_id: 
+  status: MyString
+  transacao: MyString
+  forma_pagamento: MyString

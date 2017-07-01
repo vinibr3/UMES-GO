@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170524170003) do
+ActiveRecord::Schema.define(version: 20170625160852) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -63,10 +63,14 @@ ActiveRecord::Schema.define(version: 20170524170003) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "cidade_id"
+    t.integer  "entidade_id"
+    t.integer  "valor_certificado"
+    t.float    "saldo"
   end
 
   add_index "admin_users", ["cidade_id"], name: "index_admin_users_on_cidade_id", using: :btree
   add_index "admin_users", ["email"], name: "index_admin_users_on_email", unique: true, using: :btree
+  add_index "admin_users", ["entidade_id"], name: "index_admin_users_on_entidade_id", using: :btree
   add_index "admin_users", ["reset_password_token"], name: "index_admin_users_on_reset_password_token", unique: true, using: :btree
 
   create_table "assets", force: :cascade do |t|
@@ -144,6 +148,20 @@ ActiveRecord::Schema.define(version: 20170524170003) do
   add_index "carteirinhas", ["estudante_id"], name: "index_carteirinhas_on_estudante_id", using: :btree
   add_index "carteirinhas", ["layout_carteirinha_id"], name: "index_carteirinhas_on_layout_carteirinha_id", using: :btree
 
+  create_table "certificado_pedidos", force: :cascade do |t|
+    t.float    "valor_unitario"
+    t.integer  "quantidade"
+    t.float    "valor_total"
+    t.integer  "admin_user_id"
+    t.string   "status"
+    t.string   "transacao"
+    t.string   "forma_pagamento"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
+  end
+
+  add_index "certificado_pedidos", ["admin_user_id"], name: "index_certificado_pedidos_on_admin_user_id", using: :btree
+
   create_table "cidades", force: :cascade do |t|
     t.string   "nome"
     t.boolean  "capital"
@@ -207,6 +225,7 @@ ActiveRecord::Schema.define(version: 20170524170003) do
     t.string   "logo_content_type"
     t.integer  "logo_file_size"
     t.datetime "logo_updated_at"
+    t.integer  "valor_certificado"
   end
 
   create_table "escolaridades", force: :cascade do |t|
@@ -281,6 +300,7 @@ ActiveRecord::Schema.define(version: 20170524170003) do
     t.integer  "entidade_id"
     t.integer  "cidade_id"
     t.integer  "admin_user_id"
+    t.integer  "layout"
   end
 
   add_index "estudantes", ["admin_user_id"], name: "index_estudantes_on_admin_user_id", using: :btree
@@ -345,8 +365,8 @@ ActiveRecord::Schema.define(version: 20170524170003) do
     t.string   "verso_content_type"
     t.integer  "verso_file_size"
     t.datetime "verso_updated_at"
-    t.datetime "created_at",              null: false
-    t.datetime "updated_at",              null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
     t.integer  "nome_posx"
     t.integer  "nome_posy"
     t.integer  "instituicao_ensino_posx"
@@ -377,6 +397,16 @@ ActiveRecord::Schema.define(version: 20170524170003) do
     t.integer  "matricula_posx"
     t.integer  "matricula_posy"
     t.integer  "tamanho_fonte"
+    t.string   "font_color"
+    t.string   "font_weight"
+    t.string   "font_style"
+    t.string   "font_name"
+    t.string   "font_family"
+    t.integer  "font_box"
+    t.string   "verso_alternativo_file_name"
+    t.string   "verso_alternativo_content_type"
+    t.integer  "verso_alternativo_file_size"
+    t.datetime "verso_alternativo_updated_at"
   end
 
   add_index "layout_carteirinhas", ["entidade_id"], name: "index_layout_carteirinhas_on_entidade_id", using: :btree
@@ -399,8 +429,10 @@ ActiveRecord::Schema.define(version: 20170524170003) do
   end
 
   add_foreign_key "admin_users", "cidades"
+  add_foreign_key "admin_users", "entidades"
   add_foreign_key "carteirinhas", "admin_users"
   add_foreign_key "carteirinhas", "entidades"
+  add_foreign_key "certificado_pedidos", "admin_users"
   add_foreign_key "cidades", "estados"
   add_foreign_key "cursos", "escolaridades"
   add_foreign_key "cursos", "instituicao_ensinos"

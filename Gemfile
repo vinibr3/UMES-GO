@@ -65,6 +65,7 @@ gem 'rubyzip', '~> 1.0'
 gem 'rqrcode_png', '~> 0.1.5'
 # Possibilita pagamentos via cartao ou boleto 
 gem 'pagseguro-oficial', '~> 2.6'
+# 'Possibilita pagamentos via Pagseguro API v2', utilizada no activeadmin
 gem 'mini_magick', '~> 4.5', '>= 4.5.1'
 gem "recaptcha", require: "recaptcha/rails"
 # Editor Html5 para active_admin

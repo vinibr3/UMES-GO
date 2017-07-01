@@ -11,7 +11,7 @@ ActiveAdmin.register Entidade do
 	              :sexo_presidente, :celular_presidente, :telefone_presidente,
 	              :logradouro_presidente, :numero_presidente, :complemento_presidente,
 	              :cep_presidente, :cidade_presidente, :uf_presidente, 
-	              :usuario, :url_qr_code, :token_certificado, :dominio
+	              :usuario, :url_qr_code, :token_certificado, :dominio, :valor_certificado
 
 	filter :nome
 	filter :sigla
@@ -25,6 +25,7 @@ ActiveAdmin.register Entidade do
 		column :frete_carteirinha
 		column :telefone
 		column :presidente
+		column :valor_certificado
 		actions
 	end
 
@@ -38,6 +39,7 @@ ActiveAdmin.register Entidade do
 				row :logo_file_name
 				row :valor_carteirinha
 				row :frete_carteirinha
+				row :valor_certificado
 				row :telefone
 				row :usuario, "Chave Pública"
 				row :token_certificado, "Senha"
@@ -91,6 +93,9 @@ ActiveAdmin.register Entidade do
 			f.input :logo
 			f.input :valor_carteirinha
 			f.input :frete_carteirinha
+			if current_admin_user.sim? && current_admin_user.email == "doti@doti.com.br"
+				f.input :valor_certificado
+			end
 			f.input :telefone
 			f.input :usuario
 			f.input :token_certificado, label: "Senha"
