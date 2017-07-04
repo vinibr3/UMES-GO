@@ -98,6 +98,11 @@ Rails.application.routes.draw do
       resources :cursos, only: [:index]
     end
 
+    # Avisos
+    resources :avisos, only: [:index]
+
+    # Eventos
+    resources :eventos, only: [:index]
   end
 
   namespace :admin do
