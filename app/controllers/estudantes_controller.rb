@@ -5,7 +5,13 @@ class EstudantesController < ApplicationController
 	def show
 		@estudante = current_estudante
 		@carteirinhas = current_estudante.carteirinhas.each{|carteirinha| carteirinha if carteirinha}
-		@entidade = Entidade.entidade_padrao
+		@entidade = nil
+ 		if current_estudante.entidade
+ 			@entidade = current_estudante.entidade
+ 		else
+ 			@entidade = Entidade.entidade_padrao
+ 		end
+ 		@layout_atual = @entidade.layout_atual
 	end	
 
 	def update

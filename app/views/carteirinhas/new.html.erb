@@ -1,18 +1,40 @@
 <div>
 	<%= form_for ([@estudante, @estudante.carteirinhas.build]) do |f| %>
 		<div class="row">
+			<div class="col-sm-12 col-md-12">
+				<h3 class="text-primary" style="margin-bottom: 30px;"> Carteira de Identifição Estudantil </h3>
+				<div id="flip-card" ontouchstart="this.classList.toggle('hover');">
+					<div id="card">
+						<div id="front">
+							<%= image_tag "carteirinha-modelo.png", :class=>'img img-responsive' %>
+						</div>
+						<div id="back">
+							<%= image_tag @layout_atual.verso.url, :class=>'img img-responsive show', :id=>'verso-normal' %>
+							<%  if @layout_atual && @layout_atual.verso_alternativo %>
+							<%= image_tag @layout_atual.verso_alternativo.url, :class=>'img img-responsive hide', :id=>'verso-alternativo' %>
+							<% end %>
+						</div>
+					</div>
+				</div>
+			</div>
 		<div class="col-sm-12 col-md-12">
-			<h3 class="text-primary" style="margin-bottom: 30px;"> Carteira de Identifição Estudantil </h3>
-			<%= image_tag "carteirinha-modelo.png", :class=>'img img-responsive' %>
-		</div>
-		<div class="col-sm-12 col-md-12">
-			<div class="checkbox"><br>
+			<div class="checkbox">
+				<br>
+				<label style="padding-left: 0px;">
 				<p><strong>Valor:</strong>&nbsp;R$<%= @entidade.valor_carteirinha.to_f if @entidade %> </p>
+				</label>
+				<% if @layout_atual && !@layout_atual.verso_alternativo_file_name.blank? %>
+					<br><label><p><%= f.check_box :verso_alternativo, :id=> "checkbox-verso-alternativo"%>Verso Alternativo</p></label>
+				<% end %>
 				<%= f.hidden_field :valor_carteirinha, :value => @entidade.valor_carteirinha.to_f if @entidade%>
 				<% if @entidade && !@entidade.frete_carteirinha.blank? %>
+					</br>
+					<label>
 					<p><strong>Frete:</strong>&nbsp;R$<%= @entidade.frete_carteirinha if @entidade %> </p>
 					<%= f.hidden_field :frete_carteirinha, :value => @entidade.frete_carteirinha  if @entidade%>
+					</label>
 				<%end%>
+				</label></br>
 				<label>
 					<%= f.check_box :termos %> 
 					<small style="font-size: 12px;"> Aceito os 
@@ -35,3 +57,34 @@
 		</div>
 	<%end%>
 </div>
+<script type="text/javascript"> 
+		var graus=0;
+		var arco = 1;  // 1 em 1 grau
+		flip = true;
+		
+		$("#flip-card").mouseover(function(){
+			flip = false;
+		}).mouseout(function(){
+			flip = true;
+		});
+		setInterval(function(){
+			if(flip){
+				$('#card').css('transform', "rotateY("+graus+"deg)");
+				graus+=arco;
+			}
+		}, 50);
+</script>
+<script type="text/javascript">
+	console.log('teste');
+	$("#checkbox-verso-alternativo").on('click', function(){
+		if($("#checkbox-verso-alternativo").is( ":checked" )){
+		console.log('checked');
+		$("#verso-normal").removeClass('show').addClass('hide');
+		$("#verso-alternativo").removeClass('hide').addClass('show');
+	}else{
+		console.log('not checked');
+		$("#verso-normal").removeClass('hide').addClass('show');
+		$("#verso-alternativo").removeClass('show').addClass('hide');
+	}
+	});
+</script>

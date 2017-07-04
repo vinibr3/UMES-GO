@@ -23,6 +23,8 @@ class Estudante < ActiveRecord::Base
 	has_attached_file :xerox_rg, :styles => {:original => {}}, :path => "#{url_path}"
 	has_attached_file :xerox_cpf, :styles => {:original => {}}, :path => "#{url_path}"
 	
+	enum layout: [:verso_normal, :verso_alternativo]
+
 	FILES_NAME_PERMIT = [/png\Z/, /jpe?g\Z/, /pdf\Z/]
 	FILES_CONTENT_TYPE = ['image/jpeg', 'image/png', 'application/pdf']
 

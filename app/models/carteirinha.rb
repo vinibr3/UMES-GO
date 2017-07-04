@@ -286,22 +286,22 @@ class Carteirinha < ActiveRecord::Base
 			# Cria nome do arquivo zip
 	        zipfile_name = "carteirinhas.zip"
 	        path_zip = "tmp/#{zipfile_name}"
-
+	        threads = []
 	        # Inicia o arquivo temporario como zip
 	       data = Zip::OutputStream.write_buffer do |stream| 
 	        	carteirinhas.each do |carteirinha|
 		         	begin
-		         	file_name = "#{carteirinha.numero_serie}.jpg"
-		         	temp = Tempfile.new file_name
-		         	img = Magick::Image.from_blob carteirinha.to_blob
-		         	img.first.write temp.path #converte para jpg
-		         	img = Magick::Image.read temp.path
-		         	stream.put_next_entry file_name
-		         	stream.write img.first.to_blob
-		         	ensure
-		         		temp.close
-		         		temp.unlink
-		         	end
+			         	file_name = "#{carteirinha.nome_arquivo}.jpg"
+			         	temp = Tempfile.new file_name
+			         	img = Magick::Image.from_blob carteirinha.to_blob
+			         	img.first.write temp.path #converte para jpg
+			         	img = Magick::Image.read temp.path
+			         	stream.put_next_entry file_name
+			         	stream.write img.first.to_blob
+			         ensure
+			         	temp.close
+			         	temp.unlink
+			         end
 		        end
 	        end	 
 	       {:stream=>data.string, :filename => zipfile_name}
@@ -319,6 +319,13 @@ class Carteirinha < ActiveRecord::Base
 	def self.gera_codigo_uso
 		SecureRandom.hex(4).upcase
 	end 
+
+	def nome_arquivo 
+ 		 self.estudante.verso_alternativo? ? "#{verso_alternativo}-#{self.numero_serie}.jpg" : "#{self.numero_serie}.jpg"
+ 	end
+ 
+ 	def verso_alternativo # não remover, utilizado em 'views/carteirinhas/new.erb.html' 
+ 	end
 
 	protected
 		def vencida

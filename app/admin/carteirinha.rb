@@ -222,7 +222,7 @@ ActiveAdmin.register Carteirinha do
             flash[:error]="Status da CIE não permite o download."
             redirect_to :back
         else
-            send_data carteirinha.to_blob, type: 'image/jpg', filename: "#{carteirinha.numero_serie}.jpg" 
+            send_data carteirinha.to_blob, type: 'image/jpg', filename: carteirinha.nome_arquivo 
         end
        else
         flash[:error]="Dados não encontrados."

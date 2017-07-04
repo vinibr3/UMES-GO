@@ -125,6 +125,10 @@ class Entidade < ActiveRecord::Base
 		self.extensoes.last
 	end
 
+	def layout_atual
+ 		self.layout_carteirinhas.last
+ 	end
+
 	def set_default_valor_certificado
 		self.valor_certificado = 0 if self.valor_certificado.blank?
 	end
