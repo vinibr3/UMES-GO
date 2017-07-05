@@ -88,7 +88,7 @@ class CheckoutController < ApplicationController
   end
 
   def checkout_params
-  	params.require(:checkout).permit(:valor_carteirinha, :frete_carteirinha, :transaction_id)
+  	params.require(:checkout).permit(:estudante_id, :oauth_token)
   end
 
 end

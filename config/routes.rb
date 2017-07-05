@@ -103,6 +103,11 @@ Rails.application.routes.draw do
 
     # Eventos
     resources :eventos, only: [:index]
+
+    # Checkout
+    resources :estudantes, only: [] do
+      resources :checkout, only: [:create]
+    end
   end
 
   namespace :admin do
