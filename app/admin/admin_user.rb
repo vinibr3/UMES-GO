@@ -122,7 +122,7 @@ ActiveAdmin.register AdminUser do
       end
       f.input :password
       f.input :password_confirmation
-      f.input :super_admin, as: :radio if current_admin_user.entidade
+      f.input :super_admin, as: :radio if current_admin_user.entidade.nil? || current_admin_user.sim?
       f.input :status, as: :radio
     end
     f.inputs "Dados Pessoais" do

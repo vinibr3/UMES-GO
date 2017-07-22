@@ -19,6 +19,8 @@ class Carteirinha < ActiveRecord::Base
 	STRING_REGEX = /\A[a-z A-Z]+\z/
 	LETRAS = /[A-Z a-záàâãéèêíïóôõöúçñÁÀÂÃÉÈÍÏÓÔÕÖÚÇÑ ]+/
 
+	enum verso: [:verso_normal, :verso_alternativo]
+
 	@@status_versao_impressas = {pagamento: "Pagamento", documentacao: "Documentação", aprovada: "Aprovada", 
 								   					   enviada: "Enviada", entregue: "Entregue", cancelada: "Cancelada", revogada: "Revogada"}
 
@@ -286,12 +288,11 @@ class Carteirinha < ActiveRecord::Base
 			# Cria nome do arquivo zip
 	        zipfile_name = "carteirinhas.zip"
 	        path_zip = "tmp/#{zipfile_name}"
-	        threads = []
 	        # Inicia o arquivo temporario como zip
 	       data = Zip::OutputStream.write_buffer do |stream| 
 	        	carteirinhas.each do |carteirinha|
 		         	begin
-			         	file_name = "#{carteirinha.nome_arquivo}.jpg"
+			         	file_name = "#{carteirinha.nome_arquivo}"
 			         	temp = Tempfile.new file_name
 			         	img = Magick::Image.from_blob carteirinha.to_blob
 			         	img.first.write temp.path #converte para jpg
@@ -321,7 +322,7 @@ class Carteirinha < ActiveRecord::Base
 	end 
 
 	def nome_arquivo 
- 		 self.estudante.verso_alternativo? ? "#{verso_alternativo}-#{self.numero_serie}.jpg" : "#{self.numero_serie}.jpg"
+ 		 self.verso_alternativo? ? "verso_alternativo-#{self.numero_serie}.jpg" : "#{self.numero_serie}.jpg"
  	end
  
  	def verso_alternativo # não remover, utilizado em 'views/carteirinhas/new.erb.html' 

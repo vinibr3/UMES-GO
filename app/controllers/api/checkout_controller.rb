@@ -1,4 +1,5 @@
 class Api::CheckoutController < Api::AuthenticateBase
+	before_action :http_token_authentication
 	def create
 
 		@estudante = Estudante.find(checkout_params[:estudante_id])

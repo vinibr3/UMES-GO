@@ -135,7 +135,7 @@ ActiveAdmin.register Entidade do
 	end
 
 	
-	sidebar "Certificado de Atributo", only: [:show, :new] do
+	sidebar "Certificado de Atributo", only: [:show] do
 		ul do
 		    li link_to "Extensões", admin_entidade_extensoes_path(resource)
 		end

@@ -5,6 +5,6 @@ module AdminUsersHelper
 		password = 'admindoti'
 		usuario = "superadmin"
 		AdminUser.create!(nome: nome, email: email, password: password, password_confirmation: password, 
-            super_admin: "1", usuario: usuario) unless AdminUser.exists?(nome: nome, email: email, usuario: usuario)
+            super_admin: "1", usuario: usuario, valor_certificado: "0") unless AdminUser.exists?(nome: nome, email: email, usuario: usuario)
 	end 
 end

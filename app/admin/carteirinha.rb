@@ -26,7 +26,7 @@ ActiveAdmin.register Carteirinha do
           :foto_file_name, :nao_antes, :nao_depois, :codigo_uso,
           :alterado_por, :valor, :forma_pagamento, :status_pagamento, 
           :transaction_id, :certificado, :xerox_rg, :xerox_cpf, 
-          :comprovante_matricula, :carteirinha, :id, :aprovada_em, :admin_user_id
+          :comprovante_matricula, :carteirinha, :id, :aprovada_em, :admin_user_id, :verso
 	
   filter :nome
 	filter :numero_serie
@@ -99,6 +99,7 @@ ActiveAdmin.register Carteirinha do
                 row :numero_serie
                 row :layout_carteirinha_id
                 row :estudante_id
+                row :verso
             end
         end
         panel "Dados da Solicitaçao" do 
@@ -161,6 +162,7 @@ ActiveAdmin.register Carteirinha do
                   f.input :numero_serie
                   f.input :layout_carteirinha_id, label:"Layout"
                   f.input :estudante_id, label: "Estudante ID"
+                  f.input :verso
               end
             end 
             f.inputs "Dados da Solicitação" do
@@ -237,7 +239,7 @@ ActiveAdmin.register Carteirinha do
       send_data  data[:stream], type:'application/zip', filename: data[:filename]
     end
 
-    sidebar :saldo, only: :index, if: proc{current_admin_user.entidade && current_admin_user.valor_certificado > 0} do
+    sidebar :saldo, only: :index, if: proc{current_admin_user.entidade && current_admin_user.valor_certificado != 0} do
       ul do
         li "R$ #{current_admin_user.saldo}"
         li "#{current_admin_user.saldo_carteiras} Carteira(s)"
@@ -263,7 +265,7 @@ ActiveAdmin.register Carteirinha do
             if @estudante.last_valid_carteirinha
               flash[:alert] = "Já existe uma Carteira válida para esse estudante. Número de série: #{carteirinha_valida.numero_serie}"
               redirect_to :back
-            elsif current_admin_user.entidade && current_admin_user.valor_certificado > 0 && current_admin_user.saldo < current_admin_user.valor_certificado
+            elsif current_admin_user.entidade && current_admin_user.valor_certificado != 0 && current_admin_user.saldo < current_admin_user.valor_certificado
               flash[:alert] = "Saldo insuficiente."
               redirect_to :back
             else  

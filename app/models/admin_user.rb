@@ -84,17 +84,15 @@ class AdminUser < ActiveRecord::Base
   end
 
   def saldo_carteiras
-    (self.saldo/self.valor_certificado).to_i
+    (self.saldo.to_f/self.valor_certificado).to_i
   end
 
   def show_no_menu?
-    if self.valor_certificado && self.valor_certificado > 0
+     if self.valor_certificado > 0 || !self.entidade.nil? || self.sim?
       return true
+    else
+      return false
     end
-    if !self.entidade || self.sim? 
-      return true
-    end
-    return false
   end
 
   private    

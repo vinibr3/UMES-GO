@@ -1,8 +1,9 @@
 ActiveAdmin.register CertificadoPedido do 
-	menu priority: 7, if: proc{current_admin_user.show_no_menu?}
+	menu priority: 7, if: proc{current_admin_user.valor_certificado != 0 || !current_admin_user.entidade.nil? && current_admin_user.sim? || current_admin_user.entidade.nil?}
+	
 	actions :all, except: [:destroy, :edit]
 
-	scope_to :current_admin_user, if: proc{current_admin_user.entidade}
+	scope_to :current_admin_user, if: proc{!current_admin_user.entidade.nil?}
 
 	config.sort_order = 'created_at_desc'
 
@@ -46,7 +47,7 @@ ActiveAdmin.register CertificadoPedido do
 				end
 				row "Usuário" do |certificado_pedido|
 					certificado_pedido.admin_user_nome
-				end if !current_admin_user.entidade || current_admin_user.sim?
+				end if !current_admin_user.entidade.nil? || current_admin_user.sim?
 				row "Pagamento" do |certificado_pedido|
 					certificado_pedido.status
 				end
@@ -139,6 +140,16 @@ ActiveAdmin.register CertificadoPedido do
 
 	action_item :pagar, only: :show, if: proc{current_admin_user.entidade} do
 		link_to "Pagar", pagamento_admin_certificado_pedido_path(certificado_pedido) if certificado_pedido.status.blank?
+	end
+
+	controller do
+		def action_methods # impede de criar certificado-pedido se super adm
+			if current_admin_user.entidade.nil?
+				super - ['new']
+			else
+				super
+			end
+		end
 	end
 
 end
