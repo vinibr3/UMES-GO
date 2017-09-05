@@ -133,6 +133,7 @@ ActiveAdmin.register Carteirinha do
 
     form do |f|
         f.semantic_errors *f.object.errors.keys
+            if current_admin_user.sim?
             f.inputs "Dados do Estudante" do
                 f.input :nome 
                 f.input :rg
@@ -143,6 +144,7 @@ ActiveAdmin.register Carteirinha do
                 f.input :foto, :hint => "Imagem Atual: #{f.object.foto_file_name}"
                 f.input :xerox_rg, :hint => "Imagem Atual: #{f.object.xerox_rg_file_name}"
                 f.input :xerox_cpf, :hint => "Imagem Atual: #{f.object.xerox_cpf_file_name}"
+            end
             end
             f.inputs "Dados Escolares" do
                 f.input :instituicao_ensino, :input_html=>{:id=>"instituicao-ensino-autocomplete-admin"}, label: "Instituição de ensino"
@@ -165,6 +167,7 @@ ActiveAdmin.register Carteirinha do
                   f.input :verso
               end
             end 
+            
             f.inputs "Dados da Solicitação" do
                 f.input :status_pagamento, as: :select, include_blank: false, prompt: "Selecione status do pagamento", 
                         label: "Status do Pagamento", :input_html=>{:id=>"status-pagamento-select"}
@@ -200,15 +203,15 @@ ActiveAdmin.register Carteirinha do
     end
 
     before_update do |carteirinha|
-      if carteirinha.status_versao_impressa.to_sym == :aprovada
-        if carteirinha.aprovada_em.blank?
-          carteirinha.aprovada_em = Time.new
-          current_admin_user.saldo = current_admin_user.saldo-current_admin_user.valor_certificado
-          current_admin_user.save                              
-        end
-      end
       carteirinha.admin_user = current_admin_user if carteirinha.admin_user.blank?
       carteirinha.alterado_por = current_admin_user.usuario
+    end
+
+    after_update do |carteirinha|
+      if(carteirinha.status_versao_impressa.to_sym == :aprovada && carteirinha.aprovada_em.blank?)
+        carteirinha.aprovada_em = Time.new
+        carteirinha.save
+      end
     end
 
      #Action items 
@@ -265,7 +268,7 @@ ActiveAdmin.register Carteirinha do
             if @estudante.last_valid_carteirinha
               flash[:alert] = "Já existe uma Carteira válida para esse estudante. Número de série: #{carteirinha_valida.numero_serie}"
               redirect_to :back
-            elsif current_admin_user.entidade && current_admin_user.valor_certificado != 0 && current_admin_user.saldo < current_admin_user.valor_certificado
+            elsif current_admin_user.entidade && current_admin_user.valor_certificado != 0 && !current_admin_user.tem_saldo?
               flash[:alert] = "Saldo insuficiente."
               redirect_to :back
             else  
@@ -313,15 +316,30 @@ ActiveAdmin.register Carteirinha do
           end  
         end
     end
-      # Permite envio de notificações para o aluno quando alterado o status da carteirinha 
-      # def update(options={}, &block) 
-      #   if resource.status_versao_impressa != params[:carteirinha][:status_versao_impressa]  
-      #     #EstudanteNotificacoes.status_notificacoes(@carteirinha).deliver_now if resource.update_attributes(permitted_params[:carteirinha])
-      #   end
-      #   super do |success, failure| 
-      #     block.call(success, failure) if block
-      #     failure.html { render :edit }
-      #   end
-      # end
+     
+    def update(options={}, &block) 
+        # Permite envio de notificações para o aluno quando alterado o status da carteirinha 
+        # if resource.status_versao_impressa != params[:carteirinha][:status_versao_impressa]  
+        #   #EstudanteNotificacoes.status_notificacoes(@carteirinha).deliver_now if resource.update_attributes(permitted_params[:carteirinha])
+        # end
+        status = permitted_params[:carteirinha][:status_versao_impressa].to_sym
+        aprovada_em = permitted_params[:carteirinha][:aprovada_em]
+        if status == :aprovada && aprovada_em.blank?
+            if current_admin_user.valor_certificado != 0 
+              if current_admin_user.tem_saldo?
+                current_admin_user.remove_saldo current_admin_user.valor_certificado
+                current_admin_user.save
+              else
+                flash[:alert] = "Saldo insuficiente."
+                redirect_to :back and return
+              end
+            end         
+        end
+        
+        super do |success, failure|
+          block.call(success, failure) if block
+          failure.html { render :edit}
+        end
+    end
     end
 end

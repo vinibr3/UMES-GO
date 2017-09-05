@@ -25,7 +25,7 @@ class CarteirinhasController < ApplicationController
 			redirect_to estudante_path(current_estudante)
 		else
 			@entidade = current_estudante.entidade
- 			if @entidade && @entidade.layout_atual && @entidade.layout_atual.layout_alternativo 
+ 			if @entidade && @entidade.layout_atual && @entidade.layout_atual.verso_alternativo 
  				current_estudante.verso_alternativo! if carteirinha_params[:verso_alternativo] == "1"
  			else
  				current_estudante.verso_normal!

@@ -111,3 +111,41 @@ ul.ui-autocomplete{
     }
 
 }
+
+/* Form carteirinha, efeito de fip */
+
+#flip-card{
+    width: 398px;
+    height: 258px;
+    position: relative;
+    -webkit-perspective: 1000px;    
+}
+
+#flip-card img {
+    border-radius: 15px;
+}
+
+#card{
+    transition: 1.5s;
+    -webkit-transform: 2s;
+    transform-style: preserve-3d;
+    -webkit-transform-style: preserve-3d;
+    position: relative;
+}
+
+
+#front, #back{
+    width: 398px;
+    height: 258px;
+    backface-visibility: hidden;
+    position: absolute;
+}
+
+#front{
+    z-index: 2;
+}
+
+#back{
+    transform: rotateY(180deg);
+    -webkit-transform: rotateY(180deg);
+}

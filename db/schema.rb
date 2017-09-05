@@ -11,11 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170625160852) do
-
-  # These are extensions that must be enabled in order to support this database
-  enable_extension "plpgsql"
-  enable_extension "unaccent"
+ActiveRecord::Schema.define(version: 20170727021938) do
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -110,7 +106,7 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.date     "nao_antes"
     t.date     "nao_depois"
     t.string   "qr_code"
-    t.string   "status_versao_impressa",                       null: false
+    t.string   "status_versao_impressa",                                     null: false
     t.string   "foto_file_name"
     t.string   "foto_content_type"
     t.integer  "foto_file_size"
@@ -119,8 +115,8 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.integer  "estudante_id"
     t.integer  "layout_carteirinha_id"
     t.string   "alterado_por"
-    t.datetime "created_at",                                   null: false
-    t.datetime "updated_at",                                   null: false
+    t.datetime "created_at",                                                 null: false
+    t.datetime "updated_at",                                                 null: false
     t.string   "valor"
     t.string   "forma_pagamento"
     t.string   "status_pagamento"
@@ -141,6 +137,7 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.datetime "aprovada_em"
     t.integer  "admin_user_id"
     t.integer  "numero_serie",                       limit: 8
+    t.string   "verso",                                        default: "0"
   end
 
   add_index "carteirinhas", ["admin_user_id"], name: "index_carteirinhas_on_admin_user_id", using: :btree
@@ -158,6 +155,8 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.string   "forma_pagamento"
     t.datetime "created_at",      null: false
     t.datetime "updated_at",      null: false
+    t.datetime "pago_em"
+    t.datetime "contestado_em"
   end
 
   add_index "certificado_pedidos", ["admin_user_id"], name: "index_certificado_pedidos_on_admin_user_id", using: :btree
@@ -230,9 +229,9 @@ ActiveRecord::Schema.define(version: 20170625160852) do
 
   create_table "escolaridades", force: :cascade do |t|
     t.string   "nome"
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
-    t.string   "status",     limit: 1
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.string   "status",     limit: 1, default: "1"
   end
 
   create_table "estados", force: :cascade do |t|
@@ -258,6 +257,7 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.string   "complemento"
     t.string   "setor"
     t.string   "cep"
+    t.string   "cidade"
     t.string   "uf"
     t.integer  "instituicao_ensino_id"
     t.integer  "curso_id"
@@ -300,7 +300,7 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.integer  "entidade_id"
     t.integer  "cidade_id"
     t.integer  "admin_user_id"
-    t.integer  "layout"
+    t.integer  "layout",                             default: 0
   end
 
   add_index "estudantes", ["admin_user_id"], name: "index_estudantes_on_admin_user_id", using: :btree
@@ -421,11 +421,6 @@ ActiveRecord::Schema.define(version: 20170625160852) do
     t.text     "body"
     t.datetime "created_at",        null: false
     t.datetime "updated_at",        null: false
-  end
-
-  create_table "teste", id: false, force: :cascade do |t|
-    t.string "nome"
-    t.string "numero_serie"
   end
 
   add_foreign_key "admin_users", "cidades"

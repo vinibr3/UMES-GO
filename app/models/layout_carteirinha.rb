@@ -45,10 +45,8 @@ class LayoutCarteirinha < ActiveRecord::Base
 
 	def font_weight_type
 		index = self.font_weight
-		magick_type = Magick::AnyWeight
+		magick_type = Magick::NormalWeight
 		case index
-		when '1' 
-			magick_type = Magick::NormalWeight
 		when '2' 
 			magick_type = Magick::BoldWeight
 		when '3' 
@@ -56,23 +54,21 @@ class LayoutCarteirinha < ActiveRecord::Base
 		when '4' 
 			magick_type = Magick::LighterWeight
 		else
-			magick_type = Magick::AnyWeight
+			magick_type = Magick::NormalWeight # 0 ou 1
 		end
 		return magick_type
 	end
 
 	def font_style_type
 		index = self.font_style
-		magick_type = Magick::AnyStyle
+		magick_type = Magick::NormalStyle
 		case index
-		when '0' 
-			magick_type = Magick::NormalStyle
-		when '1' 
-			magick_type = Magick::ItalicStyle
 		when '2' 
+			magick_type = Magick::ItalicStyle
+		when '3' 
 			magick_type = Magick::ObliqueStyle
 		else 
-			magick_type = Magick::AnyStyle
+			magick_type = Magick::NormalStyle # 1 ou 4
 		end
 		return magick_type
 	end

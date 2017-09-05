@@ -95,6 +95,18 @@ class AdminUser < ActiveRecord::Base
     end
   end
 
+  def add_saldo valor
+    self.saldo = self.saldo.to_f+valor if valor
+  end
+
+  def remove_saldo valor
+    self.saldo = self.saldo.to_f-valor if valor
+  end
+
+  def tem_saldo?
+    self.saldo && self.saldo >= self.valor_certificado ? true : false
+  end
+
   private    
     def password_required?
       new_record? ? super : false

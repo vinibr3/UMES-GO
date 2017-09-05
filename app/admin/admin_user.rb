@@ -167,6 +167,11 @@ ActiveAdmin.register AdminUser do
     else
       admin_user.valor_certificado = 0
     end
+    admin_user.saldo = 0 if admin_user.saldo.blank?
+  end
+
+  before_update do |admin_user|
+    admin_user.saldo = 0 if admin_user.saldo.blank?
   end
 
 end

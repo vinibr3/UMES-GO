@@ -2,7 +2,7 @@
 	<%= form_for ([@estudante, @estudante.carteirinhas.build]) do |f| %>
 		<div class="row">
 			<div class="col-sm-12 col-md-12">
-				<h3 class="text-primary" style="margin-bottom: 30px;"> Carteira de Identifição Estudantil </h3>
+				<h3 class="text-primary" style="margin-bottom: 30px;"> Carteira de Identificação Estudantil </h3>
 				<div id="flip-card" ontouchstart="this.classList.toggle('hover');">
 					<div id="card">
 						<div id="front">
@@ -78,13 +78,13 @@
 	console.log('teste');
 	$("#checkbox-verso-alternativo").on('click', function(){
 		if($("#checkbox-verso-alternativo").is( ":checked" )){
-		console.log('checked');
-		$("#verso-normal").removeClass('show').addClass('hide');
-		$("#verso-alternativo").removeClass('hide').addClass('show');
-	}else{
-		console.log('not checked');
-		$("#verso-normal").removeClass('hide').addClass('show');
-		$("#verso-alternativo").removeClass('show').addClass('hide');
-	}
+			console.log('checked');
+			$("#verso-normal").removeClass('show').addClass('hide');
+			$("#verso-alternativo").removeClass('hide').addClass('show');
+		}else{
+			console.log('not checked');
+			$("#verso-normal").removeClass('hide').addClass('show');
+			$("#verso-alternativo").removeClass('show').addClass('hide');
+		}
 	});
 </script>

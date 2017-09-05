@@ -39,11 +39,26 @@ class CertificadoPedido < ActiveRecord::Base
 
 	def self.status_pagamento_by_code code
  		statuses = CertificadoPedido.statuses.map{|k,v| k}
- 		if 1 < code.to_i && code.to_i < 7
- 			return statuses[code.to_i]
- 		else
- 			return statuses[0] # Iniciado
- 		end
+ 		return statuses[code.to_i]
  	end
+
+ 	def status_pagamento_to_i 
+		status_pgto = self.status
+		statuses = @@status_pagamentos.map{|k,v| k}
+		statuses.index(status_pgto.to_sym) if status_pgto
+	end
+
+ 	def status_tag_status_pagamento
+		status=""
+		status_pgto_to_i = self.status_pagamento_to_i
+		if status_pgto_to_i <= 2 
+			status = :warning
+		elsif status_pgto_to_i > 2 && status_pgto_to_i <= 4 
+			status = :ok
+		else status_pgto_to_i > 4 
+			status = :error
+		end if status_pgto_to_i
+		status
+	end
 
 end
