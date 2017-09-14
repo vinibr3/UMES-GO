@@ -29,9 +29,23 @@ Rails.application.configure do
   # Tell Action Mailer not to deliver emails to the real world.
   # The :test delivery method accumulates sent emails in the
   # ActionMailer::Base.deliveries array.
-  config.action_mailer.delivery_method = :test
+  #config.action_mailer.delivery_method = :test
    # Configura opções de rota padrao para action mailer
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  #config.action_mailer.default_url_options = { host: '162.243.72.115'}
+
+  # Inicio configurações de E-mail
+  config.action_mailer.raise_delivery_errors = true  # Don't care if the mailer can't send.
+  config.action_mailer.default_url_options = { host: ENV['STUDENTCASYSTEM_EMAIL_SITE_DOMAIN']}  # Configura opções de rota padrao para action mailer  
+  config.action_mailer.delivery_method = :smtp   #configura tipo de envio de e-mail 
+  config.action_mailer.smtp_settings = { #configurações para envio de e-mails
+    address: ENV['STUDENTCASYSTEM_EMAIL_SMTP'],
+    port: ENV['STUDENTCASYSTEM_EMAIL_PORT'],
+    domain: ENV['STUDENTCASYSTEM_EMAIL_DOMAIN'],
+    authentication: "plain",
+    enable_starttls_auto: true,
+    user_name: ENV['STUDENTCASYSTEM_EMAIL_USER'],
+    password: ENV['STUDENTCASYSTEM_EMAIL_PASSWORD']
+  }
 
   # Randomize the order test cases are executed.
   config.active_support.test_order = :random
