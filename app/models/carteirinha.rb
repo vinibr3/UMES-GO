@@ -242,10 +242,19 @@ class Carteirinha < ActiveRecord::Base
      	end
 	end
 
-	def to_blob
+	def to_blob(transparent=true)
 		lyt = self.layout_carteirinha
-		img = Magick::Image.read(lyt.anverso.url)
-		img = img.first
+		
+		img = nil
+		if transparent==true && lyt.impressao_transparente == "Sim" 
+			img = Magick::Image.new(lyt.anverso_width, lyt.anverso_height) do |i|
+				i.format="PNG"
+				i.background_color="none"
+				i.density="#{lyt.anverso_resolution_x}x#{lyt.anverso_resolution_y}"
+			end
+		else
+			img = Magick::Image.read(lyt.anverso.url).first
+		end
 		
 		# Configra Draw
 		draw = Magick::Draw.new

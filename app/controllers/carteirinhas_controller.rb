@@ -9,7 +9,7 @@ class CarteirinhasController < ApplicationController
 
 	def carteirinha_image
 		@carteirinha = Carteirinha.find(params[:id])
-		send_data @carteirinha.to_blob, :type=>"image/jpg", :disposition=>"inline"
+		send_data @carteirinha.to_blob(transparent=false), :type=>"image/jpg", :disposition=>"inline"
 	end
 
 	def new

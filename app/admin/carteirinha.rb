@@ -324,7 +324,7 @@ ActiveAdmin.register Carteirinha do
         # end
         status = permitted_params[:carteirinha][:status_versao_impressa].to_sym
         aprovada_em = permitted_params[:carteirinha][:aprovada_em]
-        if status == :aprovada && aprovada_em.blank?
+        if status == :aprovada && !aprovada_em.nil?
             if current_admin_user.valor_certificado != 0 
               if current_admin_user.tem_saldo?
                 current_admin_user.remove_saldo current_admin_user.valor_certificado

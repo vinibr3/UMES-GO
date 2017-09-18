@@ -24,7 +24,8 @@ class LayoutCarteirinha < ActiveRecord::Base
 	validates_numericality_of :nome_posx, :nome_posy, :instituicao_ensino_posx, :instituicao_ensino_posy,
 	                          :curso_posx, :curso_posy, :codigo_uso_posx, :codigo_uso_posy, 
 	                          :data_nascimento_posx, :data_nascimento_posy, :rg_posx, :rg_posy, 
-	                          :qr_code_posx, :qr_code_posy, :matricula_posx, :matricula_posy
+	                          :qr_code_posx, :qr_code_posy, :matricula_posx, :matricula_posy, 
+	                          :anverso_width, :anverso_height, :anverso_resolution_x, :anverso_resolution_y
 	                                                 
 	validates_numericality_of :escolaridade_posy, :escolaridade_posx, :cpf_posy, :cpf_posx, 
 							  :nao_depois_posy, :nao_depois_posx, :tamanho_fonte, allow_blank: true
@@ -37,7 +38,10 @@ class LayoutCarteirinha < ActiveRecord::Base
 	                      
 	validates_presence_of :anverso, :entidade, :tamanho_fonte   
 
-	enum font_box: [:caixabaixa, :caixaalta, :titularizado]                           
+	enum font_box: [:caixabaixa, :caixaalta, :titularizado]
+	enum impressao_transparente: {"Não"=>"0", "Sim"=>"1"}                    
+
+	before_validation :set_anverso_configurations
 
 	def entidade_nome
 		self.entidade.nome if self.entidade
@@ -73,4 +77,16 @@ class LayoutCarteirinha < ActiveRecord::Base
 		return magick_type
 	end
 
+	private 
+		def set_anverso_configurations
+			if self.anverso.dirty?
+                path = self.anverso.queued_for_write[:original].path
+
+                img = Magick::Image.read(path).first
+                self.anverso_resolution_x = img.x_resolution
+                self.anverso_resolution_y = img.y_resolution
+                self.anverso_width = img.columns
+                self.anverso_height = img.rows
+            end
+		end
 end

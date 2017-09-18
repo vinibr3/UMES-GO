@@ -5,7 +5,7 @@ class Api::CarteirinhasController < Api::AuthenticateBase
 
 	def index
 		status = Carteirinha.class_variable_get(:@@status_versao_impressas)[:aprovada]
-		@carteirinhas = Carteirinha.where("status_versao_impressa = ? AND certificado IS NULL", status)
+		@carteirinhas = Carteirinha.where("status_versao_impressa = ? AND certificado IS NULL OR certificado = ''", status)
 		if @carteirinhas.empty?
 			render_erro "Nenhuma Carteira de Identificação Estudantil com status #{status} encontrada.", 404
 		else

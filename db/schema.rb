@@ -11,7 +11,11 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170727021938) do
+ActiveRecord::Schema.define(version: 20170916025157) do
+
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+  enable_extension "unaccent"
 
   create_table "active_admin_comments", force: :cascade do |t|
     t.string   "namespace"
@@ -407,6 +411,11 @@ ActiveRecord::Schema.define(version: 20170727021938) do
     t.string   "verso_alternativo_content_type"
     t.integer  "verso_alternativo_file_size"
     t.datetime "verso_alternativo_updated_at"
+    t.float    "anverso_resolution_x"
+    t.float    "anverso_resolution_y"
+    t.integer  "anverso_width"
+    t.integer  "anverso_height"
+    t.string   "impressao_transparente"
   end
 
   add_index "layout_carteirinhas", ["entidade_id"], name: "index_layout_carteirinhas_on_entidade_id", using: :btree

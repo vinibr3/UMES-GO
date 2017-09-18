@@ -10,7 +10,7 @@
 		              :qr_code_width, :qr_code_height, :foto_posx, :foto_posy,
 		              :foto_width, :foto_height, :entidade_id, :matricula_posx, :matricula_posy, 
 		              :tamanho_fonte, :font_color, :font_weight, :font_style, :font_name, :font_family, :font_box,
-		              :verso_alternativo
+		              :verso_alternativo, :impressao_transparente
 
 		filter :anverso_file_name
 		filter :verso_file_name
@@ -32,6 +32,18 @@
 					row :anverso do 
 						a layout_carteirinha.anverso_file_name, class: "show-popup-link", href: layout_carteirinha.anverso.url
 					end
+					row "Largura Anverso" do 
+						layout_carteirinha.anverso_width			
+					end
+					row "Altura Anverso" do 
+						layout_carteirinha.anverso_height			
+					end
+					row "Resolução X Anverso" do 
+						layout_carteirinha.anverso_resolution_x			
+					end
+					row "Resolução Y Anverso" do 
+						layout_carteirinha.anverso_resolution_y			
+					end
 					row :verso do 
 						a layout_carteirinha.verso_file_name, class: "show-popup-link", href: layout_carteirinha.verso.url
 					end
@@ -40,6 +52,13 @@
 					end
 					row :entidade do
 						layout_carteirinha.entidade_nome
+					end
+				end
+			end
+			panel "Impressão" do
+				attributes_table_for layout_carteirinha do
+					row "Fundo Transparente" do
+						layout_carteirinha.impressao_transparente
 					end
 				end
 			end
@@ -122,6 +141,9 @@
 				f.input :verso, label: "Verso", :hint => "Imagem Atual: #{f.object.verso_file_name}"
 				f.input :verso_alternativo, label: "Verso Alternativo", :hint => "Imagem Atual: #{f.object.verso_alternativo_file_name}"
 				f.input :entidade, collection: Entidade.order(:nome).map{|e| [e.nome, e.id]}, prompt: "Selecione Entidade", include_blank: false
+			end
+			f.inputs "Impressão" do
+				f.input :impressao_transparente, as: :radio, label: "Fundo Transparente"
 			end
 			div class: 'inputs drag-and-drop' do
 					div class: 'drag-pick' do
@@ -288,7 +310,7 @@
 			f.actions
 
 			render inline: "<script type='text/javascript'>
-							$( document ).ready(function() {
+							$( window ).load(function() {
 	  
 								
 								setLayoutDraggables();

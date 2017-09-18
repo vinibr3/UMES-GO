@@ -71,6 +71,9 @@
 			if(flip){
 				$('#card').css('transform', "rotateY("+graus+"deg)");
 				graus+=arco;
+				if(graus == 380){
+					graus = 0;
+				}
 			}
 		}, 50);
 </script>
